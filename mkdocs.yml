@@ -4,7 +4,7 @@ site_description: The DocBot
 site_author: root
 
 repo_url: https://github.com/noahbailey/docbot
-edit_uri: ""
+edit_uri: "blob/master/docs/"
 
 theme:
     name: mkdocs
@@ -21,3 +21,6 @@ markdown_extensions:
         permalink: 
     - admonition
     - def_list
+
+
+plugins: []
