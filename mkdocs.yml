@@ -1,0 +1,23 @@
+site_name: docbot
+site_url: https://docbot.onetwoseven.one
+site_description: The DocBot
+site_author: root
+
+repo_url: https://github.com/noahbailey/docbot
+edit_uri: ""
+
+theme:
+    name: mkdocs
+    nav_style: dark 
+    highlightjs: true
+    hljs_languages:
+        - yaml
+        - django
+        - shell
+
+
+markdown_extensions:
+    - toc:
+        permalink: 
+    - admonition
+    - def_list
