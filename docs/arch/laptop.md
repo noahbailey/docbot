@@ -16,3 +16,11 @@ Enable the service:
 
     sudo systemctl enable tlp
     sudo systemctl start tlp
+    
+### Tuning Power Management
+
+To get a basic assessment of the system, run: 
+
+    sudo tlp-stat
+    
+It will give basic tips for improving power management. 
