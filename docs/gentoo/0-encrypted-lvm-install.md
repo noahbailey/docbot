@@ -16,16 +16,15 @@ This setup works great for Arch Linux and Gentoo, and likely for Debian as well.
 
 ## Set up disks
 
-Assuming /dev/sda is our primary disk.
+Assuming /dev/nvme0n1p is our primary disk.
 
 Disk Layout:
 
 Partition | Purpose              | Label | Size
 --------- | -------------------- | ----- | ----
-/dev/sda1 | GRUB2 Bootloader     | grub  | 1 MB
-/dev/sda2 | EFI System Partition | efi   | 128 MB
-/dev/sda3 | initramfs + kernel   | boot  | 500 MB
-/dev/sda4 | LUKS + LVM 	         | lvm   | 500 GB
+/dev/nvme0n1p1 | EFI System Partition | efi | 512 MB  
+/dev/nvme0n1p2 | initramfs + kernel   | boot  | 1024 MB 
+/dev/nvme0n1p3 | LUKS + LVM 	         | lvm   | 500 GB
 
 
 The rest of the volumes will be set up using LVM slices inside the LUKS container.
@@ -33,29 +32,26 @@ The rest of the volumes will be set up using LVM slices inside the LUKS containe
 ### Build Partitions
 
 ```
-parted -a optimal /dev/sda
+parted -a optimal /dev/nvme0n1
 	
 	mklabel GPT
-	mkpart primary 1 3 
-	name 1 grub 
-	set 1 bios_grub on 
 	
-	mkpart primary 3 131
-	name 2 efi 
-	set 2 boot on
+    mkpart primary 1 512
+    name 1 efi
+    set 1 boot on 
 
-	mkpart primry 131 631
-	name 3 boot
+    mkpart primary 512 1536
+	name 2 boot
 
-	mkpart primary 631 100%
-	name 4 lvm 
+	mkpart primary 1536 100%
+	name 3 lvm
 
 ```
 
 ### Create LUKS volume
 
-    cryptsetup luksFormat --type luks2 /dev/sda4
-    cryptsetup open /dev/sda4 cryptlvm
+    cryptsetup luksFormat --type luks2 /dev/nvme0n1p3
+    cryptsetup open /dev/nvme0n1p3 cryptlvm
 
 ### Create LVM device
 
@@ -70,19 +66,17 @@ LVM is flexible, and more or less containers can be added. Note: I like to have 
 Volume Name | Mount Point | Size
 ----------- | ----------- | ----
 swap	    | [swap] 	  | 4 GB
-root	    | /		  | 60 GB
-var	    | /var	  | 20 GB
-log	    | /var/log	  | 5 GB
-tmp	    | /tmp	  | 2 GB
+root	    | /		  | 50 GB 
+var	    | /var	  | 50 GB 
+log	    | /var/log	  | 10 GB 
 home	    | /home	  | 360 GB
 
 ### Create Volumes
 
     lvcreate -L 4G  stor -n swap
-    lvcreate -L 60G stor -n root
-    lvcreate -L 20G stor -n var
-    lvcreate -L 5G  stor -n log
-    lvcreate -L 2G  stor -n tmp
+    lvcreate -L 50G stor -n root
+    lvcreate -L 50G stor -n var
+    lvcreate -L 10G  stor -n log
     lvcreate -l 100%FREE stor -n home
 
 ### View LVM config
@@ -94,8 +88,8 @@ home	    | /home	  | 360 GB
 
 Partition Path | Mount Point | Filesystem
 -------------- | ----------- | ----------
-/dev/sda2      | n/a	     | fat32
-/dev/sda3      | /boot	     | ext2
+/dev/nvme0n1p1      | [EFI]	| fat32
+/dev/nvme0n1p2      | /boot	     | ext2
 /dev/stor/swap | [swap]	     | swap
 /dev/stor/root | /	     | ext4
 /dev/stor/var  | /var	     | ext4
@@ -106,9 +100,9 @@ Partition Path | Mount Point | Filesystem
 
 ### Initialize Filesystems
 
-    mkfs.fat -F 32 /dev/sda2
-    mkfs.ext2 /dev/sda3
-    mkfs.ext4 /dev/stor/{root,var,log,tmp,home}
+    mkfs.fat -F 32 /dev/nvme0n1p1
+    mkfs.ext2 /dev/nvme0n1p2
+    mkfs.ext4 /dev/stor/{root,var,log,home}
 
 ### Set up Swap
 
@@ -125,8 +119,10 @@ Root filesystem:
 
 Var and Log filesystems:
 
-    mkdir -p /mnt/var/log
+    mkdir /mnt/var
     mount /dev/stor/var /mnt/var/
+    
+    mkdir /mnt/var/log
     mount /dev/stor/log /mnt/var/log
 
 Temp filesystem
@@ -150,7 +146,7 @@ I prefer grub because it's boring. Other bootloaders can be used as well.
 Afer building/installing the `grub2` binaries on the target systems, the ESP partition can be set up.
 
      mkdir -p /boot/efi
-     mount /dev/sda2 /boot/efi
+     mount /dev/nvme0n1p2 /boot/efi
 
 Then `grub2` can be installed into the ESP.
 
@@ -166,11 +162,11 @@ Edit the `/etc/default/grub` and add cryptlvm to the boot.
 
 This may vary based on GRUB version and distribution. For Arch linux:
 
-     GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda4:cryptlvm rw quiet"
+     GRUB_CMDLINE_LINUX="cryptdevice=/dev/nvme0n1p4:cryptlvm rw quiet"
 
 Or, for Gentoo:
 
-     GRUB_CMDLINE_LINUX="crypt_root=/dev/sda4 init=/lib/systemd/systemd dolvm"
+     GRUB_CMDLINE_LINUX="crypt_root=/dev/nvme0n1p4 init=/lib/systemd/systemd dolvm"
 
 Then, the config is set up.
 
@@ -226,10 +222,10 @@ OpenRC:
 
 If the system doesn't boot correctly, you can get back in from the grub emergency shell.
 
-       cryptsetup open /dev/sda4 cryptlvm
-
+       cryptsetup open /dev/nvme0n1p4 cryptlvm
+    
        > luks passphrase...
-
+    
        mount /dev/stor/root /new_root
 
 Then the kernel will pick up from where it left off, and start the init system... Hopefully getting you back up and running.
