@@ -29,7 +29,7 @@ Enable the unit.
 
 Add this to `.bashrc` so that the shell can find the socket:
 
-       SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
+       export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 
 Then, add a key to the agent:
 
