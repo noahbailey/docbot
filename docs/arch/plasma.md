@@ -43,28 +43,39 @@ Configure SDDM as the primary display manager on the system:
     sudo systemctl enable sddm 
     sudo systemctl start sddm 
 
-Check by viewing `display-manager` service; it should contain references to SDDM. 
-
-#### /etc/systemd/system/display-manager.service
-
-```ini
-[Unit]
-Description=Simple Desktop Display Manager
-Documentation=man:sddm(1) man:sddm.conf(5)
-Conflicts=getty@tty1.service
-After=systemd-user-sessions.service getty@tty1.service plymouth-quit.service systemd-logind.service
-
-[Service]
-ExecStart=/usr/bin/sddm
-Restart=always
-
-[Install]
-Alias=display-manager.service
-```
 
 ## File Manager
 
 Install the default KDE file manager: 
 
     sudo pacman -S dolphin
+
+## Power Management
+
+    sudo pacman -S acpid powertop tlp powerdevil
+
+Make sure the services are running: 
+
+    systemctl status tlp
+
+Reference: [https://wiki.archlinux.org/index.php/Power_management](https://wiki.archlinux.org/index.php/Power_management)
+
+## Bluetooth
+
+    sudo pacman -S bluez blues-utils bluedevil
+
+Enable the bluetooth service: 
+
+    sudo systemctl enable --now bluetooth.service
+
+Reference: [https://wiki.archlinux.org/index.php/Bluetooth](https://wiki.archlinux.org/index.php/Bluetooth)
+
+## Consistent theming
+
+Consistent theming for Plasma with GTK applications. 
+
+    sudo pacman -S breeze-gtk kde-gtk-config
+
+* https://wiki.archlinux.org/index.php/Uniform_look_for_Qt_and_GTK_applications
+* https://wiki.archlinux.org/index.php/KDE#Plasma
 
