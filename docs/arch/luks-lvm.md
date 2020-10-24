@@ -109,6 +109,13 @@ Partition Path | Mount Point | Filesystem
     mkswap /dev/stor/swap
     swapon /dev/stor/swap
 
+Alternatively, swap can be an image file in the root filesystem. 
+
+    fallocate -l 1G /mnt/gentoo/swap.img
+    chmod 0600 /mnt/gentoo/swap.img
+    mkswap /mnt/gentoo/swap.img
+    swapon /mnt/gentoo/swap.img
+
 ### Mount Filesystems
 
 Substitue the mount point with where your distribution targets the install. Example, gentoo uses `/mnt/gentoo/`

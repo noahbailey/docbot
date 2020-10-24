@@ -141,7 +141,7 @@ Set locale for package manager and refresh environment:
 
 ## Installing Sources
 
-### The Kernel
+### The Kernel (Source)
 
     emerge --ask sys-kernel/gentoo-sources
     
@@ -162,3 +162,11 @@ Now it's compiling time.
     make && make modules_install
     
     make install
+
+### The Kernel (Binary)
+
+Simply install the distrokernel from portage: 
+
+    emerge --ask sys-kernel/installkernel-gentoo
+    emerge --ask sys-kernel/gentoo-kernel-bin
+
