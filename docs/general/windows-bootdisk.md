@@ -18,9 +18,14 @@ Create the volume:
 
     sudo mkfs.ntfs --quick /dev/sdb1
 
+Disable write-caching on the USB drive: 
+
+    sudo hdparm -W 0 /dev/sdb
+
 Mount the USB: 
 
     sudo mkdir -p /mnt/usb
+    sudo mount /dev/sdb1 /mnt/usb
 
 ## Mount the ISO
 
