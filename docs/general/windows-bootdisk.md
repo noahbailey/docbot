@@ -2,7 +2,9 @@
 
 First of all, don't do this. Windows is dumb and if you use it you are also dumb (by the transitive property of course).
 
-## Format & Mount USB 
+## Manually
+
+### Format & Mount USB 
 
 Create the partition: 
 
@@ -27,12 +29,14 @@ Mount the USB:
     sudo mkdir -p /mnt/usb
     sudo mount /dev/sdb1 /mnt/usb
 
-## Mount the ISO
+### Mount the ISO
 
     sudo mkdir -p /mnt/iso
 
     sudo mount -o loop /home/ongo/iso/windows-9.iso /mnt/iso
 
-## Copy files to USB
+### Copy files to USB
 
-    sudo rsync -av --progress /mnt/iso/ /mnt/usb/
+    sudo rsync -avh --no-perms --no-owner --no-group --progress /mnt/iso/ /mnt/usb/
+
+    sync /mnt/usb
