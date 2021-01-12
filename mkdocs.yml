@@ -14,7 +14,7 @@ theme:
         - yaml
         - django
         - shell
-
+    custom_dir: overrides
 
 markdown_extensions:
     - toc:
