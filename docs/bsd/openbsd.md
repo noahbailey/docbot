@@ -1,6 +1,13 @@
 # OpenBSD
 
+Sources: 
+
+* https://sohcahtoa.org.uk/openbsd.html
+* https://www.openbsd.org/faq/
+
 ## System Maintenance
+
+The base system is maintained seperately from the userspace. 
 
 ### Updates/patches
 
@@ -19,20 +26,26 @@
 
     sudo pkg_check
 
-## Creature comforts
+# Creature comforts
 
-## Web browser
+## Bash shell for user
 
-    pkg_add firefox-esr
+    doas pkg_add bash
 
-## XFCE4 desktop environment
+change the shell for yourself
 
-    pkg_add xfce
+    chsh -s /usr/local/bin/bash
 
-Edit the file `~/.xsession`
+Create a minimal `.bashrc`
 
-    exec /usr/local/bin/startxfce4
+    export PS1="[\u@\h \W] "
 
+Create a minimal `.profile`
+
+    if [ -s ~/.bashrc ]; then
+      source ~/.bashrc;
+    fi
+ 
 ## pseudo-sudo
 
 `doas` is a less bad replacement for `sudo`
@@ -45,4 +58,43 @@ It can be made to act the same as sudo by creating some aliases in your .bashrc
 
     alias sudo="doas"
 
- 
+To make it more user-friendly, use the sudo-like behaviour of not asking for password after successful auth, edit `/etc/doas.conf`
+
+    permit persist keepenv :wheel
+
+### Aliases
+
+`.bashrc` has lines added: 
+
+    alias ll="ls -lh"
+    
+### useful CLI tools
+
+    sudo pkg_add rsync vim htop neofetch
+
+# GUI stuff (for humans only)
+
+## Web browser
+
+    pkg_add firefox-esr
+
+## XFCE4 desktop environment
+
+While not strictly required, extras does add useful components
+
+    pkg_add xfce xfce-extras
+
+Enable the services: 
+
+    rcctl enable apmd
+    rcctl set apmd flags -A
+    rcctl start apmd
+
+    rcctl enable messagebus
+    rcctl start  messagebus
+
+
+Edit the file `~/.xsession`
+
+    exec /usr/local/bin/startxfce4
+
