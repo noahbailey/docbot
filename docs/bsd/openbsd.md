@@ -11,26 +11,26 @@ The base system is maintained seperately from the userspace.
 
 ### Updates/patches
 
-    sudo syspatch
+    # syspatch
 
 
 ### Upgrades/releases
 
-    sudo sysupgrade
+    # sysupgrade
 
 ### Software updates
 
-    sudo pkg_add -u
+    # pkg_add -u
 
 ### Verify integrity of packages
 
-    sudo pkg_check
+    # pkg_check
 
 # Creature comforts
 
 ## Bash shell for user
 
-    doas pkg_add bash
+    # pkg_add bash
 
 change the shell for yourself
 
@@ -97,4 +97,9 @@ Enable the services:
 Edit the file `~/.xsession`
 
     exec /usr/local/bin/startxfce4
+
+Add your user to the system groups: 
+
+    usermod -G staff billy
+    usermod -G operator billy
 
