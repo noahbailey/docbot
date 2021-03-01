@@ -146,12 +146,16 @@ match for local action "local"
 match for any action "relay"
 ```
 
-Then, add your email addresses to `/etc/mail/aliases` to allow their mail to be sent to the relay: j
+After changing the config file, restart the service: 
+    
+    # rcctl restart smtpd
+
+Then, add your email addresses to `/etc/mail/aliases` to allow their mail to be sent to the relay:
 
     root: root@example.com
     bill: bill@example.com
 
-After editing the aliases file reload the aliases db: 
+After editing the aliases file, reload the aliases db: 
 
     # newaliases
 
