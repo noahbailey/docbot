@@ -43,6 +43,23 @@ Finally, the first 1M will be overwritten to make sure there's no tainted data i
 
 Then, exit to the main installer and continue the process as usual. When asked for a root device point it towards the crypto volume created earlier, `sd2` in this example. 
 
+## Increase IO performance
+
+Enable 'soft updates' on the permanent mount points (other than swap) to increase the IO throughput/latency by editing `/etc/fstab` to add `softdep` in the mount options. 
+
+```
+xxxxxxxxxx.b none swap sw
+xxxxxxxxxx.a / ffs rw,softdep 1 1
+xxxxxxxxxx.k /home ffs rw,softdep,nodev,nosuid 1 2
+xxxxxxxxxx.d /tmp ffs rw,softdep,nodev,nosuid 1 2
+xxxxxxxxxx.f /usr ffs rw,softdep,nodev 1 2
+xxxxxxxxxx.g /usr/X11R6 ffs rw,softdep,nodev 1 2
+xxxxxxxxxx.h /usr/local ffs rw,softdep,wxallowed,nodev 1 2
+xxxxxxxxxx.j /usr/obj ffs rw,softdep,nodev,nosuid 1 2
+xxxxxxxxxx.i /usr/src ffs rw,softdep,dev,nosuid 1 2
+xxxxxxxxxx.e /var ffs rw,softdep,nodev,nosuid 1 2
+```
+
 ## System Maintenance
 
 The base system is maintained seperately from the userspace. 
@@ -119,7 +136,7 @@ To make it more user-friendly, use the sudo-like behaviour of not asking for pas
 
     sudo pkg_add rsync vim htop neofetch
 
-## Mail Relay
+## local opensmtpd relay
 
 `/etc/mail/secrets`
 
@@ -163,6 +180,26 @@ Test the config by sending yourself an email:
 
     echo "test" | mail -s "test email" jeb.kerman@example.com
 
+## Increase memory limit for your user
+
+First, add yourself to the `staff` group: 
+
+    # usermod -G staff $(whoami)
+
+Then modify the `/etc/login.conf` to determine the memory limits. Edit the `staff` section, and increase the `:datasize-cur` to about 80% of your system's memory (for a desktop) to allow big programs like web browsers to run without crashing. 
+
+```
+staff:\
+        :datasize-cur=6144M:\
+        :datasize-max=infinity:\
+        :maxproc-max=512:\
+        :maxproc-cur=256:\
+        :ignorenologin:\
+        :requirehome@:\
+        :tc=default:
+
+```
+
 # GUI stuff (for humans only)
 
 ## Web browser
@@ -185,14 +222,10 @@ Enable the services:
     rcctl start  messagebus
 
 
-Edit the file `~/.xsession`
+Edit the file `~/.xsession` to add the init for your desktop environment:
 
     exec /usr/local/bin/startxfce4
 
-Add your user to the system groups: 
-
-    usermod -G staff billy
-    usermod -G operator billy
 
 ## Trackpoint settings for Thinkpad
 
