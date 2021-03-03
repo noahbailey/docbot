@@ -1,4 +1,4 @@
-# Installing PipeWire
+# Arch: Installing PipeWire
 
 ## Install package
 

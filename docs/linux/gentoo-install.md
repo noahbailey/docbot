@@ -1,12 +1,4 @@
----
-title: 1. Installation
-description: 
-published: true
-date: 2019-07-20T19:49:07.378Z
-tags: 
----
-
-# Gentoo 
+# Gentoo: Installation
 
 ## Installing Operating System
 

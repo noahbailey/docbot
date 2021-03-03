@@ -1,12 +1,4 @@
----
-title: Memtest 86+
-description: 
-published: true
-date: 2020-01-26T23:46:16.695Z
-tags: 
----
-
-# Memtest on Gentoo
+# Gentoo: Memtest
 
 ## Emerge the package
 

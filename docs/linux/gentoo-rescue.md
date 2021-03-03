@@ -1,4 +1,4 @@
-## Rescue mode
+# Gentoo: Rescue system
 
 Enable sshd: 
 

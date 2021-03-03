@@ -1,4 +1,4 @@
-# Plymouth
+# Arch: Plymouth
 
 Plymouth can be used to 'pretty up' the boot process on Linux. 
 

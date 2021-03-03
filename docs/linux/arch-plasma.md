@@ -1,12 +1,4 @@
----
-title: Plasma Desktop
-description: 
-published: true
-date: 2019-07-20T19:49:20.432Z
-tags: 
----
-
-# Installing Plasma Desktop
+# Arch: Plasma Desktop
 
 ## Well-Known User Directories
 

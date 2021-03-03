@@ -1,8 +1,4 @@
----
-title: 2. System Configuration
----
-
-# Setup the system
+# Gentoo: Postinstall
 
 Afer the kernel is built, the system needs config. 
 

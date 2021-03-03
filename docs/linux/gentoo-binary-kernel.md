@@ -1,4 +1,4 @@
-# Binary Kernel
+# Gentoo: Binary Kernel
 
 If you're impatient (or just have a slow CPU) you may want to skip compiling the kernel. 
 

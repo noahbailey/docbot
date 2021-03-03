@@ -1,8 +1,4 @@
----
-title: WiFi with wpa_supplicant
----
-
-# Gentoo on Wifi
+# WPA Supplicant
 
 ### Create WPA passphrase
 
@@ -31,7 +27,3 @@ ntpdate 0.pool.ntp.org
 mkdir -p .ssh
 curl https://github.com/noahbailey.keys >> .ssh/authorized_keys
 ```
-
-
-
-IP addr 192.168.0.134

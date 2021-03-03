@@ -1,5 +1,5 @@
 ---
-title: Laptop Setup
+title: "Arch: Laptop Setup"
 description: 
 published: true
 date: 2019-07-20T19:48:58.723Z

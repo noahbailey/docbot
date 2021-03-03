@@ -1,4 +1,4 @@
-# Installing a Desktop Environment
+# Gentoo: Plasma Desktop
 
 
 

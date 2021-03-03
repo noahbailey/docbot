@@ -1,4 +1,4 @@
-# Shrink an LVM partition
+# Shrink LVM partition
 
 To shrink both the LVM volume _and_ the ext4 filesystem at the same time, first check: 
 

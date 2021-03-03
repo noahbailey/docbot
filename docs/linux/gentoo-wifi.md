@@ -1,8 +1,4 @@
----
-title: Installl WiFi Drivers
----
-
-# Setup Wifi 
+# Gentoo: WiFi
 
 Reference: 
 

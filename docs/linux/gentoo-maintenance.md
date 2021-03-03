@@ -1,4 +1,4 @@
-# System Maintenance
+# Gentoo Maintenance
 
 * https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Finalizing
 * https://wiki.gentoo.org/wiki/Gentoo_Cheat_Sheet
