@@ -3,7 +3,8 @@
 ## Prepare the nodes
 
 My setup will be four VMs: 
-* `kube-admin` - A management server
+
+* `kube-admin` - Control plane/master node
 * `kube-0` - Compute node #1
 * `kube-1` - Compute node #2
 * `kube-2` - compute node #3
@@ -24,6 +25,8 @@ After the VMs are up, add the IPs to `/etc/hosts`
     192.168.122.102 kube-2
 
 ### Kernel config
+
+This procedure is run on all four nodes before installing kubernetes. 
 
 Configure the bridge module to load on every boot: 
 
@@ -99,9 +102,9 @@ This take a few minutes to start the kubelet.
 
 When the command completes successfully: 
 
-  mkdir -p $HOME/.kube
-  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+    mkdir -p $HOME/.kube
+    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 Check the cluster status: 
 
@@ -115,7 +118,7 @@ service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   2m23s
 
 This command needs to be run on the rest of the nodes, `kube-0`, `kube-1`, `kube-2`. 
 
-kubeadm join 192.168.122.42:6443 --token d3elti.x8dheeghld76txud \
+    kubeadm join 192.168.122.42:6443 --token d3elti.x8dheeghld76txud \
         --discovery-token-ca-cert-hash sha256:4dc30c96de01f73c26ea645fbf34e45822c232c04fb1df58aca3a58df7c9b827 
 
 ### Install Calico
@@ -148,12 +151,12 @@ Reconfigure the kube-proxy to allow L2 networking reconfiguration
 
 ```
 kubectl get configmap kube-proxy -n kube-system -o yaml | \
-sed -e "s/strictARP: false/strictARP: true/" | \
-kubectl diff -f - -n kube-system
+  sed -e "s/strictARP: false/strictARP: true/" | \
+  kubectl diff -f - -n kube-system
 
 kubectl get configmap kube-proxy -n kube-system -o yaml | \
-sed -e "s/strictARP: false/strictARP: true/" | \
-kubectl apply -f - -n kube-system
+  sed -e "s/strictARP: false/strictARP: true/" | \
+  kubectl apply -f - -n kube-system
 ```
 
 Apply the manifests to install the service: 
@@ -213,4 +216,5 @@ NAME           TYPE           CLUSTER-IP       EXTERNAL-IP       PORT(S)        
 guestbook      LoadBalancer   10.107.63.180    192.168.122.240   3000:30829/TCP   4s
 ```
 
+Visiting `http://192.168.122.240:3000` will expose the `guestbook` service, very similarly to how a cloud load balancer would work. 
 
