@@ -1,82 +1,54 @@
----
-title: Suricata from Source
-description: Network layer IDS/IPS server
-published: true
-date: 2019-11-28T03:52:01.661Z
-tags: 
----
+# Suricata Network IDS
 
-# Suricata	
+## Install Suricata
 
-https://suricata.org 
+Add the apt repository: 
 
-https://redmine.openinfosecfoundation.org/projects/suricata/wiki/Debian_Installation
+	sudo add-apt-repository ppa:oisf/suricata-stable
+	sudo apt update
 
-## Installation 
+Install the software: 
 
-Install the build prerequisites: 
+    sudo apt install suricata
 
-```
-sudo apt install -y libpcre3 libpcre3-dbg libpcre3-dev \
-	build-essential autoconf automake libtool libpcap-dev libnet1-dev \
-	libyaml-0-2 libyaml-dev zlib1g zlib1g-dev libmagic-dev libcap-ng-dev \
-	libjansson-dev pkg-config libnspr4-dev libnss3-dev liblz4-dev
-```
+## Configure Suricata
 
-### Additional prereqs: 
+After installing, the only tweaks needed to get up and running are to change the interfaces and set up the network ranges.  
 
-- For IPS functionality: 
-```
-	apt-get -y install libnetfilter-queue-dev
+```yaml
+vars: 
+  address-groups: 
+    HOME_NET: "[10.98.76.0/24]"
+    EXTERNAL_NET: "!$HOME_NET"
 ```
 
-- For newer versions that use Rust: 
-```
-	sudo apt install  rustc cargo
-```
+And, further down,
 
-- Additional Python modules: 
-```
-	sudo apt install python3-yaml python3-distutils
-```
-
-Download sources: 
-
-```
-wget http://www.openinfosecfoundation.org/download/suricata-5.0.0.tar.gz
-tar -xvzf suricata-5.0.0.tar.gz
-cd suricata-5.0.0
+```yaml
+af-packet: 
+  - interface: eth0
+    threads: auto 
+  - interface: eth1
+    threads: auto
 ```
 
-### Compile with IPS
+The only other tweak to make to the default config is to disable the built in rules and let `suricata-update` manage rule updates. 
 
-```
-./configure --enable-nfqueue --prefix=/usr --sysconfdir=/etc --localstatedir=/var
-```
-
-### Compile Without IPS
-
-```
-./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var
+```yaml
+default-rule-path: /var/lib/suricata/rules
+rule-files: 
+  - suricata.rules
 ```
 
-### Install to system 
+The service should start up and run at this point. 
 
-Full install: 
+    sudo systemctl enable --now suricata
 
-```
-make && make install-full
-```
-
-
-
-## Start and Run
+## Rulestes
 
 Update the rulesets
 
 ```
-sudo suricata-update
-
 sudo suricata-update update-sources
 sudo suricata-update list-sources
 
@@ -85,41 +57,15 @@ sudo suricata-update enable-source et/open
 sudo suricata-update enable-source sslbl/ssl-fp-blacklist
 ```
 
-Start the service: 
+After rulesets are enabled, update the rules by live reloading the service: 
 
+	sudo suricata-update && kill -USR2 $(pidof suricata)
+
+## Automated rule updates
+
+Create a file in `/etc/cron.d/suricata` with this content: 
+
+```cron
+# Daily suricata update
+00 0,6,12,18 * * *  root  (suricata-update && kill -USR2 `pidof suricata`)
 ```
-sudo systemctl start suricata.service
-```
-
-
-
-### Oinkmaster
-
-```
-sudo apt install oinkmaster
-```
-
-add the ET rules URL: 
-
-```
-url = http://rules.emergingthreats.net/open/suricata/emerging.rules.tar.gz
-```
-
-And run the rule updater: 
-
-```
-sudo oinkmaster -C /etc/oinkmaster.conf -o /etc/suricata/rules
-```
-
-
-
-TODO: Create updater scripts, config log rotation etc. 
-
-TODO: Enable drop mode
-Line 425: 
-
-```yaml
-- drop: 
-    enabled: no --> yes
-```
-
