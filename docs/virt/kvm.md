@@ -7,6 +7,10 @@
     sudo systemctl enable libvirtd
     sudo systemctl start libvirtd
 
+Additional utilities: 
+
+    sudo apt install cloud-utils virtinst
+
 Add your user to the `libvirt` group: 
 
     sudo useradd $USER libvirt

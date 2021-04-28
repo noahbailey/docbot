@@ -96,7 +96,7 @@ cgroupDriver: systemd
 
 Begin the init process: 
 
-    sudo kubeadm init
+    sudo kubeadm init --pod-network-cidr="10.99.0.0/16" 
 
 This take a few minutes to start the kubelet. 
 
