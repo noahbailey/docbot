@@ -90,3 +90,13 @@ virt-install --name virt-01 --memory 512 --vcpus 1 \
     --virt-type kvm --graphics none \
     --network network=default,model=virtio --import
 ```
+
+## Networking
+
+### Attach a bridge
+
+Attach br0 to an existing VM, with a randomized MAC address: 
+
+    virsh attach-interface --domain my-cool-vm --type bridge \
+      --source br0 --model virtio --config --live \
+      --mac $(openssl rand -hex 6 |sed 's/^\(..\)\(..\)\(..\)\(..\)\(..\).*$/02:\1:\2:\3:\4:\5/')

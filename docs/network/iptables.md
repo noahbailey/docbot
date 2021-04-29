@@ -10,6 +10,13 @@ Reload sysctls:
 
     sudo sysctl --system
 
+## Install startup scripts
+
+Install the package: 
+
+    sudo apt-get install -y iptables-persistent
+
+This will create a set of startup services to load the contents of `/etc/iptables/rules.*` on boot. 
 
 ## Firewall Rules
 
