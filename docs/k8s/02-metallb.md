@@ -1,4 +1,4 @@
-# MetalLB bare-metal Load balancer
+# MetalLB Load balancer
 
 MetalLB is used on a cluster that does not have access to cloud environments, enabling the use of `type=LoadBalancer` services. 
 
@@ -82,3 +82,4 @@ guestbook      LoadBalancer   10.107.63.180    192.168.122.240   3000:30829/TCP 
 
 Visiting `http://192.168.122.240:3000` will expose the `guestbook` service, very similarly to how a cloud load balancer would work. 
 
+It can also be used in conjunction with [Nginx Ingress](/k8s/nginx-ingress).

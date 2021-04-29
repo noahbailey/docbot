@@ -27,6 +27,9 @@ spec:
         - name: http
           containerPort: 8000
           protocol: TCP
+        env: 
+          - name: FOO
+            value: "bar"
         livenessProbe:
           tcpSocket:
             port: http

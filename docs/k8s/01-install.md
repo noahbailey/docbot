@@ -1,4 +1,4 @@
-# Installing Kubernetes on KVM
+# Install K8s on Bare Metal or Hypervisor
 
 ## Prepare the nodes
 
@@ -121,7 +121,7 @@ This command needs to be run on the rest of the nodes, `kube-0`, `kube-1`, `kube
     kubeadm join 192.168.122.42:6443 --token d3elti.x8dheeghld76txud \
         --discovery-token-ca-cert-hash sha256:4dc30c96de01f73c26ea645fbf34e45822c232c04fb1df58aca3a58df7c9b827 
 
-### Install Calico
+## Install Calico
 
 Calico provides the pod network abstraction layer for this cluster.
 

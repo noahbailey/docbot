@@ -1,4 +1,4 @@
-# Rook - Ceph on Kubernetes
+# Rook/Ceph Distributed Storage
 
 References: 
 
