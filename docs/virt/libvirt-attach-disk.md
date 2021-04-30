@@ -1,4 +1,4 @@
-# Add disk to VM
+# Attach disk to VM
 
 ## Create a disk file
 
@@ -64,6 +64,17 @@ Create a single EXT4 filesystem on the disk, with the label "datavol":
 
 ## Mount the EXT4 filesystem
 
+Create a mountpoint
+
+    sudo mkir -p /mnt/disk-vdb
+
+Find the filesystem UUID, and write an `/etc/fstab` entry: 
+
+    UUID=02bb033c-a191-40c0-94fb-bb025c724b13  /mnt/disk-vdb   ext4  defaults,discard  0  1
+
+Mount all filesystems: 
+
+    sudo mount -a
 
 ## Detach disk from VM
 

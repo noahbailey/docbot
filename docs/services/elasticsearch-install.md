@@ -1,9 +1,8 @@
-# ElasticSearch Repository
+# ElasticSearch Install
 
 References: 
 
 * https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html
-
 
 ## Repository
 
@@ -23,4 +22,13 @@ For the proprietary version (including XPACK)
 Or the Apache 2.0 licenced OSS version: 
 
     echo "deb https://artifacts.elastic.co/packages/oss-7.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-7.x.list
+
+
+## Install Package
+
+    sudo apt-get update && sudo apt-get install elasticsearch
+
+## Enable service
+
+    sudo systemctl enable --now elasticsearch.service
 
