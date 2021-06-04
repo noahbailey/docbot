@@ -210,7 +210,7 @@ staff:\
 
 While not strictly required, extras does add useful components
 
-    pkg_add xfce xfce-extras
+    pkg_add xfce xfce-extras consolekit2
 
 Enable the services: 
 
@@ -224,7 +224,7 @@ Enable the services:
 
 Edit the file `~/.xsession` to add the init for your desktop environment:
 
-    exec /usr/local/bin/startxfce4
+    exec /usr/local/bin/startxfce4 --with-ck-launch
 
 
 ## Trackpoint settings for Thinkpad
