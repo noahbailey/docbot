@@ -120,3 +120,21 @@ Send a snapshot on the local system, to another array on the local system
 Send a differential backup based on yesterday's snapshot: 
 
     zfs send -R -v -i zroot@202107011210.16 zroot@202107022003.05 | zfs recv tank/zroot-backup
+
+
+### Automatic snapshot script
+
+```sh
+#!/bin/sh
+
+echo "[+] Getting last snapshot on system"
+LAST_SNAPSHOT=`zfs list -t snapshot zroot | tail -n1 | awk '{print $1}'`
+
+echo "[+] Taking system snapshot"
+zfs snapshot -r zroot@$(date "+%Y%m%d%H%M.%S")
+NEW_SNAPSHOT=`zfs list -t snapshot zroot | tail -n1 | awk '{print $1}'`
+
+echo "[+] Sending incremental backup"
+zfs send -R -v -i $LAST_SNAPSHOT $NEW_SNAPSHOT | zfs recv tank/zroot-backup
+
+```
