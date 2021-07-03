@@ -93,6 +93,3 @@ Install thunderbird:
 Add dev and admin tools: 
 
     sudo pkg install gnupg git 
-
-
-

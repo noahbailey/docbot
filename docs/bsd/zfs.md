@@ -11,6 +11,22 @@ Or, install `lsblk` as you would on Linux:
     sudo pkg install lsblk
     lsblk
 
+## Create pool
+
+Create a basic mirror pool: 
+
+    zpool create tank mirror /dev/da0 /dev/da1
+
+Create a striped-mirror pool (similar to raid-10): 
+
+    zpool create tank mirror /dev/da0 /dev/da1 mirror /dev/da2 /dev/da3
+
+## Create dataset
+
+/tank/backups
+    
+    zfs create -o compress=lz4 tank/backups
+
 ## Snapshots
 
 Take a snapshot: 
@@ -33,6 +49,19 @@ Delete a snapshot:
 
     sudo zfs destroy zroot@2021-06-30
 
+
+### Compare a snapshot state: 
+
+```
+zfs diff zroot/usr/home@202107011206.09
+Password:
+M	/usr/home/noah/.bash_history
++	/usr/home/noah/Desktop/1.txt
++	/usr/home/noah/Desktop/2.txt
++	/usr/home/noah/Desktop/3.txt
++	/usr/home/noah/Desktop/4.txt
+M	/usr/home/noah/Desktop
+```
 
 ## Devices
 
@@ -80,3 +109,14 @@ Check scrub status:
         vtbd0p3.eli  ONLINE       0     0     0
 
     errors: No known data errors
+
+
+## Replication
+
+Send a snapshot on the local system, to another array on the local system
+
+    zfs send -R -v zroot@202107011210.16 | zfs recv tank/zroot-backup
+
+Send a differential backup based on yesterday's snapshot: 
+
+    zfs send -R -v -i zroot@202107011210.16 zroot@202107022003.05 | zfs recv tank/zroot-backup
