@@ -127,6 +127,9 @@ Send a differential backup based on yesterday's snapshot:
 ```sh
 #!/bin/sh
 
+NUM_SNAPSHOTS=`zfs list -t snapshot zroot | awk '/@/{print $1}' | wc -l`
+echo "[+] ${NUM_SNAPSHOTS} snapshots on volume"
+
 echo "[+] Getting last snapshot on system"
 LAST_SNAPSHOT=`zfs list -t snapshot zroot | tail -n1 | awk '{print $1}'`
 
@@ -136,5 +139,10 @@ NEW_SNAPSHOT=`zfs list -t snapshot zroot | tail -n1 | awk '{print $1}'`
 
 echo "[+] Sending incremental backup"
 zfs send -R -v -i $LAST_SNAPSHOT $NEW_SNAPSHOT | zfs recv tank/zroot-backup
+
+echo "[+] Deleting oldest snapshot"
+OLDEST_SNAPSHOT=`zfs list -t snapshot zroot | awk '/@/{print $1}' | head -n1`
+zfs destroy -r -v "${OLDEST_SNAPSHOT}"
+echo "[+] Deleted snapshot $OLDEST_SNAPSHOT"
 
 ```
