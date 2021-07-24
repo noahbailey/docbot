@@ -134,7 +134,7 @@ echo "[+] Getting last snapshot on system"
 LAST_SNAPSHOT=`zfs list -t snapshot zroot | tail -n1 | awk '{print $1}'`
 
 echo "[+] Taking system snapshot"
-zfs snapshot -r zroot@$(date "+%Y%m%d%H%M.%S")
+zfs snapshot -r zroot@$(date "+%Y%m%d-%H%M")
 NEW_SNAPSHOT=`zfs list -t snapshot zroot | tail -n1 | awk '{print $1}'`
 
 echo "[+] Sending incremental backup"
@@ -144,5 +144,4 @@ echo "[+] Deleting oldest snapshot"
 OLDEST_SNAPSHOT=`zfs list -t snapshot zroot | awk '/@/{print $1}' | head -n1`
 zfs destroy -r -v "${OLDEST_SNAPSHOT}"
 echo "[+] Deleted snapshot $OLDEST_SNAPSHOT"
-
 ```
