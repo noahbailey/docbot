@@ -31,6 +31,20 @@ set mail-format {
 }
 ```
 
+### Unix socket 
+
+Control socket is used to check state
+
+```
+set httpd unixsocket /var/run/monit.sock
+  allow user:pass
+```
+
+This allows status checks
+
+    sudo monit status
+    sudo monit summary
+
 ### System alerts
 
 Basic system params:
@@ -44,7 +58,8 @@ check system $HOST
   if swap usage > 50% then alert
 
 check device root with path /
-    if SPACE usage > 80% then alert
+    if space usage > 90% then alert
+    if inode usage > 90% then alert
 
 ```
 
@@ -63,8 +78,8 @@ OpenSSH service status:
 
 ```
 check process sshd with pidfile /var/run/sshd.pid
-  start program  "/etc/init.d/sshd start"
-  stop program  "/etc/init.d/sshd stop"
+  start program = "/usr/bin/systemctl start sshd"
+  stop program  = "/usr/bin/systemctl stop sshd"
   if failed port 22 protocol ssh then restart
 ```
 
@@ -72,7 +87,8 @@ Nginx status:
 
 ```
 check process nginx with pidfile /var/run/nginx.pid
-  start program = "/etc/init.d/nginx start"
-  stop program  = "/etc/init.d/nginx stop"
-  group www-data
+  start program = "/usr/bin/systemctl start nginx"
+  stop program  = "/usr/bin/systemctl stop nginx"
+  if failed port 80  for 2 cycles then restart
+  if failed port 443 for 2 cycles then restart
 ```
