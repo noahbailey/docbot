@@ -18,16 +18,18 @@ Optionally install postfix
 Set monit to send to root user: 
 
 ```
-set mailserver localhost
+mailserver 127.0.0.1
 set alert root@localhost
+  but not on { instance }
 
 set mail-format {
-    from:    Monit <monit@$HOST>
-    subject: alert --  $EVENT $SERVICE
-    message: $EVENT Service $SERVICE
-                Timestamp:   $DATE
-                Action:      $ACTION
-                Description: $DESCRIPTION
+  from:    root@$HOST
+  subject:  [$SERVICE] $DESCRIPTION
+  message: Alert for $SERVICE
+Date:        $DATE
+Action:      $ACTION
+Host:        $HOST
+Description: $DESCRIPTION
 }
 ```
 
@@ -45,7 +47,10 @@ This allows status checks
     sudo monit status
     sudo monit summary
 
-### System alerts
+# Alert example configurations
+
+
+## System and Disk Check
 
 Basic system params:
 
@@ -63,7 +68,9 @@ check device root with path /
 
 ```
 
-Network status: 
+## Network Interface check
+
+Network status, and usage/throughput info: 
 
 ```
 check network public with interface eth0
@@ -74,6 +81,17 @@ check network public with interface eth0
   if total uploaded > 1 GB in last hour then alert
 ```
 
+## Network Reachability check
+
+Test if the host is able to ping an internet host: 
+
+```
+check host REACHABILITY with address 1.1.1.1
+  if failed ping with timeout 10 seconds then alert
+```
+
+## SSH server check
+
 OpenSSH service status: 
 
 ```
@@ -83,7 +101,9 @@ check process sshd with pidfile /var/run/sshd.pid
   if failed port 22 protocol ssh then restart
 ```
 
-Nginx status: 
+## Nginx check
+
+Nginx status, including an HTTP probe: 
 
 ```
 check process nginx with pidfile /var/run/nginx.pid
@@ -91,4 +111,64 @@ check process nginx with pidfile /var/run/nginx.pid
   stop program  = "/usr/bin/systemctl stop nginx"
   if failed port 80  for 2 cycles then restart
   if failed port 443 for 2 cycles then restart
+```
+
+## DNS & DHCP server checks
+
+Bind9 status: 
+
+```
+check process bind9 with pidfile /var/run/named/named.pid
+  start program = "/usr/bin/systemctl start bind9"
+  stop program  = "/usr/bin/systemctl stop  bind9"
+  if failed host 127.0.0.1 
+    port 53 type udp for 2 cycles then restart
+```
+
+DHCP server status: 
+
+```
+check process dhcpd with pidfile /var/run/dhcpd.pid
+  start program = "/usr/bin/systemctl start isc-dhcp-server"
+  stop program  = "/usr/bin/systemctl stop  isc-dhcp-server"
+```
+
+## Hardware checks
+
+Install the sensor reading utilities: 
+
+    sudo apt install smartmontools lm-sensors hddtemp
+
+Then, create a cpu checker script at `/opt/proctemp.sh`
+
+```sh
+#!/bin/bash
+TEMP=`tr -d '000' < /sys/class/thermal/thermal_zone0/temp`
+exit $TEMP
+```
+
+And, a disk checker script at `/opt/disktemp.sh`
+
+```sh
+#!/bin/bash
+TEMP=$(/usr/sbin/hddtemp -n /dev/sda)
+exit $TEMP
+```
+
+Note that both scripts output the temperature measurement as the exit code. 
+
+Then, the monit checks can read the code and decide how to handle the event based on the temperature measurements: 
+
+```
+check program PROCTEMP with path "/opt/proctemp.sh"
+  every 5 cycles
+  if status > 75 then alert
+
+check program DISKTEMP with path "/opt/disktemp.sh"
+  every 5 cycles
+  if status > 60 then alert
+
+check program DISKHEALTH with path "/usr/sbin/smartctl -H /dev/sda"
+  every 5 cycles
+  if status > 0 then alert
 ```

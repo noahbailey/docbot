@@ -69,3 +69,9 @@ If everything works correctly, you will be able to send emails to yourself:
     echo "beep boop" | mail -s "Test email from your cool server!" root
 
 That will send an email to the same address configured in the aliases file. 
+
+## Check the firewall
+
+If your system has a firewall configured, make sure there is a rule to allow local programs connect to tcp/25 for smtp: 
+
+    sudo iptables -A INPUT -s 127.0.0.1 -p tcp -m tcp --dport 25 -j ACCEPT

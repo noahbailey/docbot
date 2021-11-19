@@ -30,7 +30,16 @@ Service = "-eximstats"
 mailer = "/usr/sbin/sendmail -t"
 ```
 
-Then, move the script from daily to weekly: 
+Then, delete the default daily script: 
 
-    sudo mv /etc/cron.daily/00logwatch /etc/cron.weekly/
+    sudo rm -v /etc/cron.daily/00logwatch 
 
+And create a weekly cron task
+
+    sudo vim /etc/cron.d/logwatch
+
+```
+# Run weekly - Monday at midnight
+MAILTO="root"
+0 0 * * 1   root    /usr/sbin/logwatch
+```
