@@ -19,11 +19,8 @@ listen on localhost
 table aliases file:/etc/aliases
 table secrets file:/etc/secrets
 
-action "local" maildir alias <aliases>
-action "relay" relay host smtp+tls://myrelay@smtp.mailgun.org:587 auth <secrets>
-
-match for local action "local"
-match for any action "relay"
+accept for local alias <aliases> deliver to mbox
+accept for any relay via tls+auth://myrelay@smtp.mailgun.org:587 auth <secrets>
 ```
 
 `/etc/secrets`
@@ -38,6 +35,16 @@ Set the permissions and ownership:
     sudo chown root:opensmtpd /etc/secrets
 
 Note: the manpages refer to the group `_smtpd`, but this group does not exist on Linux; only OpenBSD. 
+
+## Enable and start the service
+
+After editing the config files, restart the service: 
+
+    sudo systemctl restart opensmtpd
+
+Make sure it is enabled: 
+
+    sudo systemctl enable opensmtpd
 
 ## Aliases
 
