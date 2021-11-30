@@ -26,10 +26,6 @@ set mail-format {
   from:    root@$HOST
   subject:  [$SERVICE] $DESCRIPTION
   message: Alert for $SERVICE
-Date:        $DATE
-Action:      $ACTION
-Host:        $HOST
-Description: $DESCRIPTION
 }
 ```
 
@@ -46,6 +42,35 @@ This allows status checks
 
     sudo monit status
     sudo monit summary
+
+## Minimal Config
+
+Example config file, needing only service checks. 
+
+```
+set daemon 60
+set log /var/log/monit.log
+set idfile /var/lib/monit/id
+set statefile /var/lib/monit/state
+set mailserver 127.0.0.1
+set eventqueue
+    basedir /var/lib/monit/events
+    slots 250
+set alert root@localhost
+  but not on { instance }
+set httpd unixsocket /var/run/monit.sock
+  allow user:pass
+
+set mail-format {
+  from:    root@$HOST
+  subject:  [$SERVICE] $DESCRIPTION
+  message: Alert for $SERVICE
+Date:        $DATE
+Action:      $ACTION
+Host:        $HOST
+Description: $DESCRIPTION
+}
+```
 
 # Alert example configurations
 
