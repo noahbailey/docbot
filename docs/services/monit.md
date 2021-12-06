@@ -88,8 +88,11 @@ check system $HOST
   if swap usage > 50% then alert
 
 check device root with path /
-    if space usage > 90% then alert
-    if inode usage > 90% then alert
+  if space usage > 90% then alert
+  if inode usage > 90% then alert
+  if changed fsflags then alert
+  if service time > 10 milliseconds for 5 cycles then alert
+
 
 ```
 
@@ -134,8 +137,8 @@ Nginx status, including an HTTP probe:
 check process nginx with pidfile /var/run/nginx.pid
   start program = "/usr/bin/systemctl start nginx"
   stop program  = "/usr/bin/systemctl stop nginx"
-  if failed port 80  for 2 cycles then restart
-  if failed port 443 for 2 cycles then restart
+  if failed port 80 protocol http for 2 cycles then restart
+  if failed port 443 protocol https for 2 cycles then restart
 ```
 
 ## DNS & DHCP server checks
