@@ -141,6 +141,36 @@ check process nginx with pidfile /var/run/nginx.pid
   if failed port 443 protocol https for 2 cycles then restart
 ```
 
+## PHP-FPM check
+
+Check if the PHP daemon is running, and the socket is functional: 
+
+```
+check process php-fpm with pidfile /var/run/php/php7.4-fpm.pid
+  start program = "/usr/bin/systemctl start php7.4-fpm"
+  stop program  = "/usr/bin/systemctl stop  php7.4-fpm"
+  if failed unixsocket /var/run/php/php7.4-fpm.sock for 2 cycles then restart
+  if cpu > 60% for 2 cycles then alert
+  if cpu > 90% for 5 cycles then restart
+  if memory usage > 1024 MB for 2 cycles then alert
+  if memory usage > 8192 MB for 5 cycles then restart
+```
+
+## Mysql and Mariadb
+
+Check if the process is running, and using a regular amount of system resources: 
+
+```
+check process mysqld with pidfile ls /var/run/mysqld/mysqld.pid
+  start program = "/usr/bin/systemctl start mysqld"
+  stop program  = "/usr/bin/systemctl stop  mysqld"
+  if cpu > 60% for 2 cycles then alert
+  if cpu > 90% for 5 cycles then restart
+  if memory usage > 1024 MB for 2 cycles then alert
+  if memory usage > 8192 MB for 5 cycles then restart
+```
+
+
 ## DNS & DHCP server checks
 
 Bind9 status: 
