@@ -49,6 +49,7 @@ Example config file, needing only service checks.
 
 ```
 set daemon 60
+  with start delay 30
 set log /var/log/monit.log
 set idfile /var/lib/monit/id
 set statefile /var/lib/monit/state
