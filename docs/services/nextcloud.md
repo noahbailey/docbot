@@ -20,7 +20,7 @@ GRANT ALL PRIVILEGES ON nextcloud.* TO 'nextcloud';
 
 Install all of the PHP pieces for the site: 
 
-    sudo apt install php-fpm php7.4-curl php7.4-gd php7.4-json php7.4-xml php7.4-mbstring php7.4-zip php7.4-mysql php7.4-intl php7.4-bcmath php7.4-gmp php7.4-imagick
+    sudo apt install php-fpm php7.4-curl php7.4-gd php7.4-json php7.4-xml php7.4-mbstring php7.4-zip php7.4-mysql php7.4-intl php7.4-bcmath php7.4-gmp php7.4-imagick imagemagick
 
 
 Then, edit the main config to change the defaults: 
@@ -43,6 +43,14 @@ Enable this for the site by adding to config.php
 ```php
 'memcache.local' => '\OC\Memcache\APCu',
 ```
+
+Then edit `/etc/php/7.4/mods-available/apcu.ini` and add: 
+
+```ini
+apc.enable_cli=1
+```
+
+This is required for `occ` and the cron jobs. 
 
 ## Nginx
 
