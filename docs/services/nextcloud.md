@@ -218,3 +218,11 @@ The automated background job is an important part of how nextcloud tracks intern
 
     MAILTO=""
     */5  *  *  *  *   www-data   php -f /var/www/nextcloud/cron.php
+
+## Antivirus
+
+[Install Clamd](/services/clamav) and configure it.
+
+In NextCloud settings, install and enable the "Antivirus for Files" application. 
+
+Then, in the admin section change the mode to "Clamd Socket" to speed up scans. 
