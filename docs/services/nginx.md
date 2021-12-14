@@ -116,6 +116,7 @@ Default vhost to discourage spam. This should be added to the bottom of `/etc/ng
 ```
     server {
         listen 80 default_server;
+        listen [::]:80 default_server;
         server_name _;
         server_name_in_redirect off;
         return 301 http://$remote_addr;
@@ -123,6 +124,7 @@ Default vhost to discourage spam. This should be added to the bottom of `/etc/ng
     }
     server {
         listen 443 ssl  default_server;
+        listen [::]:443 ssl default_server;
         server_name _;
         ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
         ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
@@ -131,5 +133,4 @@ Default vhost to discourage spam. This should be added to the bottom of `/etc/ng
         return 301 http://$remote_addr;
         access_log /var/log/nginx/spam.log; 
     }
-}
 ```

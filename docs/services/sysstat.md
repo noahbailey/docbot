@@ -30,11 +30,13 @@ On most distros, a cron job will be automatically created - On others it must be
 
 `/etc/cron.d/sysstat`
 
-    */2 * * * *   root  /usr/lib/sa/sa1
+    */2 * * * *   root  /usr/lib/sysstat/sa1 1  1
+    59 23 * * *   root  /usr/lib/sysstat/sa1 60 2
 
 Or if full stats collection is required: 
 
-    */2 * * * *   root  /usr/lib/sa/sa1 -S ALL
+    */2 * * * *   root  /usr/lib/sysstat/sa1 1  1 -S ALL
+    59 23 * * *   root  /usr/lib/sysstat/sa1 60 2 -A ALL
 
 This job will log the statistics at a given time and save the output to `/var/log/saxx`
 

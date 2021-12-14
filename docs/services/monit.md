@@ -58,7 +58,7 @@ set eventqueue
     basedir /var/lib/monit/events
     slots 250
 set alert root@localhost
-  but not on { instance }
+  but not on { instance, action }
 set httpd unixsocket /var/run/monit.sock
   allow user:pass
 
