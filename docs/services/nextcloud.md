@@ -86,6 +86,7 @@ server {
     # Using LetsEncrypt for TLS:
     ssl_certificate     /etc/letsencrypt/live/cloud.onetwosevn.one/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/cloud.onetwosevn.one/privkey.pem;
+    ssl_protocols TLSv1.3 TLSv1.2;
 
     # HSTS settings
     add_header Strict-Transport-Security "max-age=15768000; includeSubDomains;" always;
