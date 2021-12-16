@@ -49,3 +49,29 @@ A crontab to automate the scan script, for example, scan the whole system once p
 MAILTO=root
 0 2 * * 3   root    /opt/scan.sh
 ```
+
+
+## Realtime Malware Scanner
+
+Install utilities to find changed files: 
+
+    sudo apt install inotify-tools
+
+By default, most distros limit the number of inotify watches that can run at once. Check this and update if necessary. 
+
+    sudo sysctl fs.inotify.max_user_watches=524288
+
+A script to watch new files for malware: 
+
+`/opt/scanner.sh`
+
+```shell
+#!/bin/bash
+JAIL="/var/cache/clamdjail"
+inotifywait -m /var/www/nextcloud/data -e create  |
+    while read directory action file; do
+        clamdscan --fdpass --multiscan --move="$JAIL" $file
+    done
+```
+
+`incron` can also be used for this.
