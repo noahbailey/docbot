@@ -212,7 +212,7 @@ sudo certbot certonly --nginx
 
 ### Cron
 
-The automated background job is an important part of how nextcloud tracks internal state. Ajax or web-cron are unreliable, it's best to use the build in system. 
+The automated background job is an important part of how nextcloud tracks internal state. Ajax or web-cron are unreliable, it's best to use the built-in system. 
 
 /etc/cron.d/nextcloud
 
@@ -226,3 +226,39 @@ The automated background job is an important part of how nextcloud tracks intern
 In NextCloud settings, install and enable the "Antivirus for Files" application. 
 
 Then, in the admin section change the mode to "Clamd Socket" to speed up scans. 
+
+
+## Redis
+
+Install redis and tools: 
+
+    sudo apt install redis-server php-redis
+
+Make sure the service is enabled on startup: 
+
+    sudo systemctl enable redis-server
+
+Restart php-fpm to use the new modules: 
+
+    sudo systemctl restart php7.4-fpm
+
+Then, modify the config.php file: 
+
+```php
+  'memcache.local' => '\OC\Memcache\APCu',
+  'memcache.distributed' => '\OC\Memcache\Redis',
+  'memcache.locking' => '\OC\Memcache\Redis',
+  'redis' => [
+    'host' => 'localhost',
+    'port' => 6379,
+  ],
+```
+
+After this is configured, the admin status page will update accordingly. 
+
+## Email
+
+The ideal way to configure email is using a local relay service, rather than programming the credentials into NextCloud. This gives you the robust retry queue and other very useful features. 
+
+* [Postfix local relay](/services/postfix)
+* [BSD OpenSMTPD relay](/services/opensmtpd)
