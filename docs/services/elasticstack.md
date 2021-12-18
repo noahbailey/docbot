@@ -1,10 +1,53 @@
----
-title: Logstash Config
-description: Configuration Reference for Logstash
-published: true
-date: 2019-07-20T19:49:38.298Z
-tags: 
----
+# Elastic Stack Install
+
+References: 
+
+* https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html
+
+## Repository
+
+Import the GPG key for all repos. 
+
+    wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+
+Generally installed on newer Ubuntu/Debian systems, but install it anyways. 
+
+    sudo apt-get install apt-transport-https
+
+
+Add the source list to your apt config: 
+
+    echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-7.x.list
+
+
+## Install Elasticsearch
+
+    sudo apt-get update && sudo apt-get install elasticsearch
+
+Enable the service on bootup: 
+
+    sudo systemctl enable --now elasticsearch.service
+
+
+## Install Kibana 
+
+    sudo apt-get install kibana
+
+Enable the service on bootup: 
+
+    sudo systemctl enable --now kibana.service
+
+## Install Logstash
+
+Only if you hate yourself though. 
+
+    sudo apt-get install logstash
+
+Enable the service on bootup: 
+
+    sudo systemctl enable --now logstash.service
+
+
 
 # Logstash Configuration 
 
