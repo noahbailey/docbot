@@ -25,23 +25,25 @@ Message:   Foobar is fubar'd!
 
 ## Configure rsyslog
 
-Add this config to a new file,  `/etc/rsyslog.d/alert.conf`
+This will configure the daemon to send alerts on any message with the severity "Error" or higher. 
+
+The config snippet below will be added to a new config file, such as  `/etc/rsyslog.d/alert.conf`
+
 
 ```sh
-$ModLoad ommail
-$ActionMailSMTPServer 127.0.0.1
-$ActionMailFrom rsyslog@localhost
-$ActionMailTo root@localhost
-$template mailSubject,"[%hostname%] Syslog alert for %programname%"
-$template mailBody,"Alert for %hostname%:\n\nTimestamp: %timereported%\nSeverity:  %syslogseverity-text%\nProgram:   %programname%\nMessage:  %msg%"
-$ActionMailSubject mailSubject
-# make sure we receive an email only once per hour
-$ActionExecOnlyOnceEveryInterval 3600
-# capture all errors, excluding annoying OpenVPN auth message
-if $syslogseverity <= 3 and not ($msg contains 'cannot locate HMAC') then :ommail:;mailBody
-```
+module(load="ommail")
+template (name="mailBody"  type="string" string="Alert for %hostname%:\n\nTimestamp: %timereported%\nSeverity:  %syslogseverity-text%\nProgram:   %programname%\nMessage:  %msg%")
+template (name="mailSubject" type="string" string="[%hostname%] Syslog alert for %programname%")
 
-This will configure the daemon to send alerts on any message with the severity "Error" or higher. 
+if $syslogseverity <= 3 then {
+   action(type="ommail" server="127.0.0.1" port="25"
+          mailfrom="rsyslog@localhost"
+          mailto="root@localhost"
+          subject.template="mailSubject"
+          template="mailBody"
+          action.execonlyonceeveryinterval="3600")
+}
+```
 
 ## Test the config
 
@@ -53,7 +55,7 @@ Rsyslog can self-test its config:
 
 Reload the service to apply the changes: 
 
-    sudo systemctl reload rsyslog
+    sudo systemctl restart rsyslog
 
 ## Test alerts
 
