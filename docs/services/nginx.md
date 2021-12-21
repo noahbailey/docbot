@@ -114,23 +114,42 @@ server {
 Default vhost to discourage spam. This should be added to the bottom of `/etc/nginx/nginx.conf`
 
 ```
-    server {
-        listen 80 default_server;
-        listen [::]:80 default_server;
-        server_name _;
-        server_name_in_redirect off;
-        return 301 http://$remote_addr;
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
+    server_name_in_redirect off;
+
+    location /healthz {
+        return 200;
+        access_log off; 
+    }
+
+    location / {
+        return 301 http://$remote_addr$request_uri;
         access_log /var/log/nginx/spam.log; 
     }
-    server {
-        listen 443 ssl  default_server;
-        listen [::]:443 ssl default_server;
-        server_name _;
-        ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
-        ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
-        ssl_protocols TLSv1.3 TLSv1.2;
-        server_name_in_redirect off;
-        return 301 http://$remote_addr;
+}
+
+server {
+    listen 443 ssl  default_server;
+    listen [::]:443 ssl default_server;
+    server_name _;
+    ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
+    ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
+    ssl_protocols TLSv1.3 TLSv1.2;
+    server_name_in_redirect off;
+
+    location /healthz {
+        return 200;
+        access_log off; 
+    }
+
+    location / {
+        return 301 http://$remote_addr$request_uri;
         access_log /var/log/nginx/spam.log; 
     }
+}
 ```
+
+This configuration also provides a `/health` endpoint that returns an empty success response, which helps keep monitoring tools happy.  
