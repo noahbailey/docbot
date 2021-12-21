@@ -47,6 +47,8 @@ This allows status checks
 
 Example config file, needing only service checks. 
 
+`/etc/monit/monitrc`
+
 ```
 set daemon 60
   with start delay 30
@@ -71,14 +73,20 @@ Action:      $ACTION
 Host:        $HOST
 Description: $DESCRIPTION
 }
+
+include /etc/monit/monitrc.d/*
 ```
 
 # Alert example configurations
 
+Each component or service is placed in a separate file in the `monitrc.d` directory to make the configuration more module. 
+
 
 ## System and Disk Check
 
-Basic system params:
+Basic system params: 
+
+`/etc/monit/monitrc.d/sys`
 
 ```
 check system $HOST
@@ -92,14 +100,16 @@ check device root with path /
   if space usage > 90% then alert
   if inode usage > 90% then alert
   if changed fsflags then alert
-  if service time > 10 milliseconds for 5 cycles then alert
-
-
+  if service time > 250 milliseconds for 5 cycles then alert
+  if read rate > 500 operations/s for 5 cycles then alert
+  if write rate > 200 operations/s for 5 cycles then alert
 ```
 
 ## Network Interface check
 
 Network status, and usage/throughput info: 
+
+`/etc/monit/monitrc.d/network`
 
 ```
 check network public with interface eth0
@@ -114,6 +124,8 @@ check network public with interface eth0
 
 Test if the host is able to ping an internet host: 
 
+`/etc/monit/monitrc.d/network`
+
 ```
 check host REACHABILITY with address 1.1.1.1
   if failed ping with timeout 10 seconds then alert
@@ -122,6 +134,8 @@ check host REACHABILITY with address 1.1.1.1
 ## SSH server check
 
 OpenSSH service status: 
+
+`/etc/monit/monitrc.d/sshd`
 
 ```
 check process sshd with pidfile /var/run/sshd.pid
@@ -134,6 +148,8 @@ check process sshd with pidfile /var/run/sshd.pid
 
 Nginx status, including an HTTP probe: 
 
+`/etc/monit/monitrc.d/nginx`
+
 ```
 check process nginx with pidfile /var/run/nginx.pid
   start program = "/usr/bin/systemctl start nginx"
@@ -145,6 +161,8 @@ check process nginx with pidfile /var/run/nginx.pid
 ## PHP-FPM check
 
 Check if the PHP daemon is running, and the socket is functional: 
+
+`/etc/monit/monitrc.d/php-fpm`
 
 ```
 check process php-fpm with pidfile /var/run/php/php7.4-fpm.pid
@@ -161,8 +179,10 @@ check process php-fpm with pidfile /var/run/php/php7.4-fpm.pid
 
 Check if the process is running, and using a regular amount of system resources: 
 
+`/etc/monit/monitrc.d/mysqld`
+
 ```
-check process mysqld with pidfile ls /var/run/mysqld/mysqld.pid
+check process mysqld with pidfile /var/run/mysqld/mysqld.pid
   start program = "/usr/bin/systemctl start mysqld"
   stop program  = "/usr/bin/systemctl stop  mysqld"
   if cpu > 60% for 2 cycles then alert
@@ -176,6 +196,8 @@ check process mysqld with pidfile ls /var/run/mysqld/mysqld.pid
 
 Bind9 status: 
 
+`/etc/monit/monitrc.d/named`
+
 ```
 check process bind9 with pidfile /var/run/named/named.pid
   start program = "/usr/bin/systemctl start bind9"
@@ -185,6 +207,8 @@ check process bind9 with pidfile /var/run/named/named.pid
 ```
 
 DHCP server status: 
+
+`/etc/monit/monitrc.d/dhcpd`
 
 ```
 check process dhcpd with pidfile /var/run/dhcpd.pid
@@ -217,6 +241,8 @@ exit $TEMP
 Note that both scripts output the temperature measurement as the exit code. 
 
 Then, the monit checks can read the code and decide how to handle the event based on the temperature measurements: 
+
+`/etc/monit/monitrc.d/hw`
 
 ```
 check program PROCTEMP with path "/opt/proctemp.sh"
