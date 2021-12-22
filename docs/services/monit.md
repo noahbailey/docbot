@@ -154,8 +154,8 @@ Nginx status, including an HTTP probe:
 check process nginx with pidfile /var/run/nginx.pid
   start program = "/usr/bin/systemctl start nginx"
   stop program  = "/usr/bin/systemctl stop nginx"
-  if failed port 80 protocol http for 2 cycles then restart
-  if failed port 443 protocol https for 2 cycles then restart
+  if failed port 80 protocol  http  request "/healthz" for 2 cycles then restart
+  if failed port 443 protocol https request "/healthz" for 2 cycles then restart
 ```
 
 ## PHP-FPM check
