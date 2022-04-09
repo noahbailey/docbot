@@ -52,4 +52,9 @@ Check active rules
 
     sudo iptables -L -v
 
+## Block IPs
+
+Create a firewall rule to drop traffic to the IP that offends you: 
+
+    sudo iptables -I INPUT -s 66.77.88.99 -j DROP
 
