@@ -26,3 +26,15 @@ The service needs a quick restart for it to take effect:
 
 See: [https://linrunner.de/tlp/settings/battery.html](https://linrunner.de/tlp/settings/battery.html)
 
+
+## PulseAudio power management 
+
+Pulse sometimes hogs CPU, which can significantly shorten battery life. 
+
+Add to `/etc/pulse/default.pa`
+
+```
+load-module module-udev-detect tsched = 0
+```
+
+See: [https://wiki.debian.org/PulseAudio#Excessive_CPU_usage_and_distortion](https://wiki.debian.org/PulseAudio#Excessive_CPU_usage_and_distortion)
