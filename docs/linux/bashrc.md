@@ -17,6 +17,8 @@ shopt -s checkwinsize
 
 # A very basic prompt
 export PS1="[\033[1;35m\u@\h \033[1;36m\W\033[0m] "
+# Set the term title
+echo -en "\033]0;$USER@$HOSTNAME\a"
 
 # Setup colours
 eval "$(dircolors -b)"

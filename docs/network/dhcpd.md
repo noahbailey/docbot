@@ -19,6 +19,7 @@ max-lease-time 86400;
 deny declines;
 deny duplicates;
 one-lease-per-client true;
+dhcp-cache-threshold 50;
 
 ddns-update-style none;
 

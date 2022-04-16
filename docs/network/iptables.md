@@ -18,7 +18,7 @@ Install the package:
 
 This will create a set of startup services to load the contents of `/etc/iptables/rules.*` on boot. 
 
-## Firewall Rules
+## Firewall Ruleset
 
 **`/etc/iptables/rules.v4`**
 
@@ -44,13 +44,30 @@ COMMIT
 COMMIT
 ```
 
+## Workstation Ruleset
+
+**`/etc/iptables/rules.v4`**
+
+```
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -m state --state INVALID -j DROP -m comment --comment "Reject invalid" 
+-A INPUT -p icmp --icmp-type 8 -m state --state NEW -j ACCEPT -m comment --comment "Allow Ping"
+-A INPUT -m comment --comment "Default deny rule" -j REJECT --reject-with icmp-host-unreachable
+COMMIT
+```
+
 Reload the rules: 
 
-    sudo iptables-restore /etc/iptables/rules.v4
+    sudo iptables-restore < /etc/iptables/rules.v4
 
 Check active rules
 
-    sudo iptables -L -v
+    sudo iptables -L -v -n
 
 ## Block IPs
 
