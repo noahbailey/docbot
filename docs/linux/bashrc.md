@@ -1,4 +1,4 @@
-## Bashrc
+## .bashrc
 
 ```sh
 # ~/.bashrc
@@ -16,7 +16,7 @@ HISTFILESIZE=2000
 shopt -s checkwinsize
 
 # A very basic prompt
-export PS1="[\033[1;35m\u@\h \033[1;36m\W\033[0m] "
+export PS1="[\[\e[1;35m\]\u@\h \[\e[1;36m\]\W\[\e[0m\]] "
 # Set the term title
 echo -en "\033]0;$USER@$HOSTNAME\a"
 
