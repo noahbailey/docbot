@@ -54,10 +54,11 @@ COMMIT
 :FORWARD DROP [0:0]
 :OUTPUT ACCEPT [0:0]
 -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
--A INPUT -i lo -j ACCEPT
 -A INPUT -m state --state INVALID -j DROP -m comment --comment "Reject invalid" 
--A INPUT -p icmp --icmp-type 8 -m state --state NEW -j ACCEPT -m comment --comment "Allow Ping"
--A INPUT -m comment --comment "Default deny rule" -j REJECT --reject-with icmp-host-unreachable
+-A INPUT -p icmp -j ACCEPT -m comment --comment "Accept ping"
+-A INPUT -i lo -j ACCEPT -m comment --comment "Accept localhost"
+-A INPUT -d 224.0.0.251/32 -p udp -m udp --dport 5353 -j ACCEPT -m comment --comment "Accept mDNS"
+-A INPUT -j REJECT --reject-with icmp-host-unreachable
 COMMIT
 ```
 
