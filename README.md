@@ -1,14 +1,19 @@
 # DOCBOT | https://docbot.onetwoseven.one
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/b2ee61a6-f794-417d-91b5-777ae2a577d9/deploy-status)](https://app.netlify.com/sites/docbot/deploys)
+[![Github](https://img.shields.io/github/stars/noahbailey/docbot?style=social)](https://github.com/noahbailey/docbot)
 
+DocBot is a cheatsheet, recipe book, reference guide, and notebook. 
 
-_DOCBOT_ is the instrument of your documentation. A universal source of truth. 
+This site is a collection of useful documents, scripts, bits and pieces that I have assembled over the years. 
 
-Treat _DOCBOT_ with kindness and respect, and you in turn will receive what you deserve. 
-
+The purpose of this site is to conveniently hold bits of code and frequently googled commands. 
 
 ## Editing
+
+Clone the repo locally:
+
+    git clone https://github.com/noahbailey/docbot.git
 
 This site is built with `mkdocs`. To test a local copy: 
 
@@ -20,6 +25,6 @@ For more info, see https://www.mkdocs.org/
 
 ## Contributing
 
-Put in a pull request. If it's approved, the site will automatically update. 
+Put in a pull request! If it's approved, the site will automatically update. 
 
 
