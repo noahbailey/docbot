@@ -8,18 +8,21 @@ case $- in
       *) return;;
 esac
 
-# Configure history
 HISTCONTROL=ignoreboth
 shopt -s histappend
 HISTSIZE=1000
 HISTFILESIZE=2000
 shopt -s checkwinsize
 
-# A very basic prompt
-export PS1="[\[\e[1;35m\]\u@\h \[\e[1;36m\]\W\[\e[0m\]] "
-# Set the term title
-echo -en "\033]0;$USER@$HOSTNAME\a"
+## Git prompt
+gitbr() {
+	git branch --show-current 2> /dev/null | sed -e 's/\(.*\)/ (\1)/'
+}
 
+# A very basic prompt
+# Terminal title to user@host
+# [user@host ~/path] (git-branch) % 
+export PS1='\[\e]0;$USER@$HOSTNAME \W\a\][\[\e[1;35m\]\u@\h \[\e[1;36m\]\W\[\e[0m\]]\[\e[1;33m\]$(gitbr)\[\e[1;00m\] % '
 # Setup colours
 eval "$(dircolors -b)"
 
