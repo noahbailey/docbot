@@ -1,5 +1,7 @@
 # Debian Software Updates
 
+These are a couple useful tricks for updating a Debain (or derivative) system's packages, firmware, software, and more. 
+
 ## Firmware Updates
 
 Fwupd is a neat tool to help manage device firmware. It usually comes installed by default if you select a desktop environment from tasksel. 
@@ -19,8 +21,53 @@ Install updates:
 
 If there are no devices on your system that have supported firmware, the package can be removed safely. 
 
+## Update Tools
 
-## Checking for updates
+### Changelogs
+
+Useful for changelogs and finding missing programs/libraries: 
+
+    sudo apt install apt-listchanges
+
+This gives a more useful changelog view when updating: 
+
+```
+linux (5.10.113-1) bullseye-security; urgency=high
+
+  * New upstream stable update:
+    https://www.kernel.org/pub/linux/kernel/v5.x/ChangeLog-5.10.107
+    - Revert "xfrm: state and policy should fail if XFRMA_IF_ID 0"
+      (Closes: #1008299)
+    - xfrm: Check if_id in xfrm_migrate
+    - xfrm: Fix xfrm migrate issues when address family changes
+    ...
+```
+
+This will also be mailed to root after a software update. 
+
+I wouldn't recommend setting this up on a cluster of several servers, as you will get annoying duplicate emails. This is best used on 'pet' machines like personal laptops or home servers. 
+
+### Apt-File
+
+Install it using apt:
+
+    sudo apt install -y apt-file
+
+Once installed, update the index: 
+
+    sudo apt-file update
+
+`apt-file` helps find appropriate packages for a given file name. For example: 
+
+```
+$ apt-file search /bin/netstat
+net-tools: /bin/netstat                   
+netstat-nat: /usr/bin/netstat-nat
+```
+
+## Software Updates
+
+### Checking for updates
 
     sudo apt update
     apt list --upgradable
@@ -29,23 +76,25 @@ Dry run mode
 
     apt upgrade -s > update_log.txt
 
-## Apply all updates
+### Apply all updates
 
     sudo apt upgrade -y
 
-## Checking for pending restart
+### Checking for pending restart
 
 List the services that need 
 
     sudo needrestart -q -r l
 
-## Cleanup debian
+### Cleanup system
 
 Remove unneeded packages
 
     sudo apt autoremove
     sudo apt autoclean
     sudo apt clean
+
+### Cleanup install
 
 Cleanup an install to remove un-needed packages:
 
