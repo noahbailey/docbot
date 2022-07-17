@@ -47,6 +47,27 @@ This will also be mailed to root after a software update.
 
 I wouldn't recommend setting this up on a cluster of several servers, as you will get annoying duplicate emails. This is best used on 'pet' machines like personal laptops or home servers. 
 
+### Bug reports
+
+Useful for checking critical bugs on the Debian tracking system before installation. It is helpful to check if an update is safe before executing the package updates. 
+
+    sudo apt install apt-listbugs reportbug
+
+Example: 
+
+```
+$ apt-listbugs list thunderbird
+
+Retrieving bug reports... Done
+Parsing Found/Fixed information... Done
+grave bugs of thunderbird (→ ) <Forwarded>
+ b1 - #1014745 - thunderbird: Using "Reply All" is sometimes removing all Cc recipients
+Summary:
+ thunderbird(1 bug)
+```
+
+This will automatically kick in when performing an `apt upgrade` operation. 
+
 ### Apt-File
 
 Install it using apt:
@@ -64,6 +85,25 @@ $ apt-file search /bin/netstat
 net-tools: /bin/netstat                   
 netstat-nat: /usr/bin/netstat-nat
 ```
+
+## Flatpak
+
+Install and setup flatpak: 
+
+    sudo apt install flatpak
+    sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+Show enabled repos: 
+
+    flatpak remotes
+
+Find software: 
+
+    flatpak search foobar
+
+Install software: 
+
+    sudo flatpak install foobar
 
 ## Software Updates
 
