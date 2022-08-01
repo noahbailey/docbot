@@ -45,13 +45,19 @@ if $syslogseverity <= 3 then {
 }
 ```
 
-## Test the config
+To exclude services from email alerts, modify the `if` line. For example, excluding spammy alerts from smartd: 
+
+```
+if $syslogseverity <= 3 and $programname != 'smartd' then {
+```
+
+## Test the rsyslog config
 
 Rsyslog can self-test its config: 
 
     sudo rsyslogd -N1
 
-## Apply the config
+## Apply the rsyslog config
 
 Reload the service to apply the changes: 
 
