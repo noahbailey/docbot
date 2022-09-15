@@ -103,6 +103,6 @@ Scrapes the node exporter on http://localhost:9100/metrics
 	port 443
 	tls on
 	tls.verify on
-	http_user 284366
-	http_passwd eyJrIjoiYWJhY2ZhOTI4ZTdjMWUyM2FlNTFlYzcxMzk4NTEyZTgxYmI1ZDcyYiIsIm4iOiJtZXRyaWNzLWFnZW50IiwiaWQiOjcwODkyNn0=
+	http_user xxxxx
+	http_passwd xxxxx
 ```
