@@ -106,3 +106,17 @@ Scrapes the node exporter on http://localhost:9100/metrics
 	http_user xxxxx
 	http_passwd xxxxx
 ```
+
+## Output: Forward to another server
+
+`/etc/fluent-bit/conf.d/99-forward-output.conf`
+
+```ini
+[OUTPUT]
+    Name          forward
+    Match         logs.*
+    Host          logs.mycoolserver.com
+    Port          5000
+    tls           on
+    tls.verify    off
+```
