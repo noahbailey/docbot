@@ -109,6 +109,32 @@ server {
 }
 ```
 
+## Authentication
+
+Install the PAM module:
+
+    sudo apt install libnginx-mod-http-auth-pam
+
+Create the PAM config at `/etc/pam.d/nginx`
+
+    auth       include      common-auth
+    account    include      common-account
+
+Allow nginx to read the shadow file:
+
+    usermod -aG shadow www-data 
+
+Add lines to the proxy config:
+
+```
+    location / {
+        auth_pam "secure";
+        auth_pam_service_name "nginx";
+        proxy_http_version 1.1;
+        proxy_pass http://localhost:8008;
+    }
+```
+
 ## The Go-Away-Vhost
 
 Default vhost to discourage spam. This should be added to the bottom of `/etc/nginx/nginx.conf`
