@@ -42,6 +42,25 @@ Some directory should also be created:
 	sudo mkdir -p /var/log/flb
 	sudo mkdir -p /etc/fluent-bit/conf.d
 
+## Test configuration
+
+Execute the program with `-D` to use dry-run mode: 
+
+    sudo /opt/fluent-bit/bin/fluent-bit -c /etc/fluent-bit/fluent-bit.conf -D
+
+This outputs the results of the config test immediately:
+
+```
+Fluent Bit v1.9.8
+* Copyright (C) 2015-2022 The Fluent Bit Authors
+* Fluent Bit is a CNCF sub-project under the umbrella of Fluentd
+* https://fluentbit.io
+
+configuration test is successful
+```
+
+A non-successful test will output the affected line number and exit with a non-zero code. 
+
 
 ## Input: Prometheus scraper
 
@@ -70,6 +89,48 @@ Scrapes the node exporter on http://localhost:9100/metrics
 	db /var/log/journal/fluent.db
 	read_from_tail on
 	lowercase on
+
+[FILTER]
+    name record_modifier
+    match logs.journald
+    record type journald
+```
+
+## Input: Nginx events
+
+```ini
+[INPUT]
+    name tail
+    tag logs.nginx
+    parser nginx
+    path /var/log/nginx/access.log
+    db /var/log/nginx/fluent_access.db
+    read_from_head true
+
+[FILTER]
+    name record_modifier
+    match logs.nginx
+    record type nginx
+```
+
+## GeoIP lookup
+
+Requires the GeoIP database from MaxMind
+
+```ini
+[FILTER]
+    name geoip2
+    match *
+    database /var/lib/GeoIP/GeoLite2-City.mmdb
+    lookup_key remote
+    record geoip_country remote %{country.names.en}
+    record geoip_iso remote %{country.iso_code}
+    record geoip_city remote %{city.names.en}
+    record geoip_latitude remote %{location.latitude}
+    record geoip_longitude remote %{location.longitude}
+    record geoip_postal_code remote %{postal.code}
+    record geoip_region-code remote %{subdivisions.0.iso_code}
+    record geoip_region-name remote %{subdivisions.0.names.en}
 ```
 
 ## Output: Grafana cloud prometheus remote write
@@ -119,4 +180,20 @@ Scrapes the node exporter on http://localhost:9100/metrics
     Port          5000
     tls           on
     tls.verify    off
+```
+
+## Output: Forward to another server over HTTP
+
+`/etc/fluent-bit/conf.d/99-forward-http.conf`
+
+```ini
+[OUTPUT]
+    name http
+    match logs.*
+    host logs.mycoolserver.com
+    uri /flb-log/${HOSTNAME}
+    port 443
+    tls on
+    tls.verify on
+    format json
 ```
