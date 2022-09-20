@@ -111,6 +111,29 @@ server {
 
 ## Authentication
 
+### `htpasswd` authentication
+
+Install apache utils, which allows creation of the auth file
+
+    sudo apt install apache2-utils
+
+Create the basic auth file
+
+    sudo htpasswd /etc/nginx/htpasswd myuser
+
+Add authentication to an endpoint in the proxy config:
+
+```
+    location / {
+        auth_basic           "Restricted Access";
+        auth_basic_user_file /etc/nginx/htpasswd; 
+        proxy_http_version 1.1;
+        proxy_pass http://localhost:8008;
+    }
+```
+
+### PAM authentication
+
 Install the PAM module:
 
     sudo apt install libnginx-mod-http-auth-pam
