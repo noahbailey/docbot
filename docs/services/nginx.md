@@ -202,3 +202,33 @@ server {
 ```
 
 This configuration also provides a `/health` endpoint that returns an empty success response, which helps keep monitoring tools happy.  
+
+## Monitoring
+
+Enable a stub_status page:
+
+```
+server {
+    listen 127.0.0.1:8080;
+    location /stub_status {
+        stub_status;
+    }
+}
+```
+
+Install the prometheus exporter:
+
+    sudo apt install prometheus-nginx-exporter
+
+The listener on port 9113/tcp will expose the metrics. 
+
+This can also be scraped by fluent-bit:
+
+```
+[INPUT]
+    name prometheus_scrape
+    host 127.0.0.1
+    port 9113
+    tag  metrics.nginx
+    scrape_interval 30s 
+```

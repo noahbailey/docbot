@@ -6,7 +6,17 @@ date: 2019-07-20T19:49:26.374Z
 tags: 
 ---
 
-# DNS Server Configuration 
+# BIND9 DNS Server
+
+## Check Configuration
+
+Quick verify:
+
+    sudo named-checkconf /etc/bind/named.conf
+
+Load all zones and check validity:
+
+    sudo named-checkconf -z /etc/bind/named.conf
 
 
 ## Primary DNS Server
@@ -161,3 +171,18 @@ $ORIGIN 192.168.10.IN-ADDR.ARPA.
 
 11              IN      PTR     dns1
 ```
+
+# Monitoring
+
+The statistics exporter must be enabled:
+
+```
+statistics-channels {
+        inet 127.0.0.1 port 8053 allow { localhost; };
+};
+```
+
+Then, the prometheus exporter can be installed
+
+    sudo apt install prometheus-bind-exporter
+
