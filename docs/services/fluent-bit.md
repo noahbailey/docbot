@@ -186,7 +186,14 @@ Requires the GeoIP database from MaxMind
 
 `/etc/fluent-bit/conf.d/99-forward-http.conf`
 
+Add a `hostname` id to each log before forwarding:
+
 ```ini
+[FILTER]
+    name record_modifier
+    match logs.*
+    record hostname ${HOSTNAME}
+
 [OUTPUT]
     name http
     match logs.*
