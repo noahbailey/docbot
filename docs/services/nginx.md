@@ -232,3 +232,42 @@ This can also be scraped by fluent-bit:
     tag  metrics.nginx
     scrape_interval 30s 
 ```
+
+
+### PHP-FPM
+
+Uncomment the line in /etc/php/7.4/fpm/www.conf
+
+    pm.status_path = /status
+
+Check the config: 
+
+    $ sudo /usr/sbin/php-fpm7.4 -t
+
+    [28-Oct-2022 20:09:04] NOTICE: configuration file /etc/php/7.4/fpm/php-fpm.conf test is successful
+
+Reload the service
+    
+    sudo systemctl restart php7.4-fpm.service
+
+Download the exporter binary:
+
+    sudo wget https://github.com/bakins/php-fpm-exporter/releases/download/v0.6.1/php-fpm-exporter.linux.amd64 -O /usr/local/bin/php-fpm-exporter
+    sudo chmod +x /usr/local/bin/php-fpm-exporter
+
+Create a service: `/etc/systemd/system/prometheus-php-fpm-exporter.service`
+
+```ini
+[Unit]
+Description=PHP-FPM Prometheus Exporter
+Documentation=https://github.com/bakins/php-fpm-exporter
+After=network.target php7.4-fpm.service
+
+[Service]
+Restart=on-failure
+User=root
+ExecStart=/usr/local/bin/php-fpm-exporter --addr=127.0.0.1:9222 --fastcgi=unix:///run/php/php-fpm.sock
+
+[Install]
+WantedBy=multi-user.target
+```
