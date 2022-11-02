@@ -16,9 +16,17 @@ Create ipset
 
     sudo /usr/sbin/ipset flush  blocklist
 
-Populate ipset with the list. This may take up to a minute:
+A script to populate ipset with the drop list:
 
-    while read ip; do sudo /usr/sbin/ipset add  blocklist $ip -exist || echo $ip; done < /var/lib/blocklist/drop.txt
+```sh
+#!/bin/bash
+while read ip; do 
+    /usr/sbin/ipset add blocklist $ip -exist || echo $ip
+done < /var/lib/blocklist/drop.txt
+```
+
+This will take about a minute to run. Once complete, the blocklist can be viewed:
+
 
 ```
 $ sudo /usr/sbin/ipset list blocklist
@@ -46,7 +54,8 @@ Warning: 168.151.54.25 is in set blocklist.
 
 ## Iptables rules
 
-Add an iptables rule to block ranges on the blocklist. This should be added before any other rules that will take effect on the "outside" interface.
+Add an iptables rule to block ranges on the blocklist. 
+For a server or workstation, this should probably go on the INPUT chain:
 
 ```
 -A INPUT -m set --match-set blocklist src -j LOG --log-prefix "BLOCKLIST:" --log-level 4
@@ -54,7 +63,14 @@ Add an iptables rule to block ranges on the blocklist. This should be added befo
 ...
 ```
 
-Make the rules active:
+For a firewall, this should be added to FORWARD before any other rules that will take effect on the "outside" interface.
+
+```
+-A FORWARD -m set --match-set blocklist src -j LOG --log-prefix "BLOCKLIST:" --log-level 4
+-A FORWARD -m set --match-set blocklist src -j DROP -m comment --comment "drop droplisted IP ranges"
+```
+
+Once set, the updated ruleset should be loaded:
 
     sudo iptables-restore < /etc/iptables/rules.v4
 
@@ -66,3 +82,25 @@ Once added to the active rules, it should appear like this:
     0     0 DROP       all  --  *      *       0.0.0.0/0            0.0.0.0/0            match-set blocklist src /* drop droplisted IP ranges */
   171 31280 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
 ```
+
+## Update script
+
+`/opt/blocklist.sh`
+
+```sh
+#!/bin/bash
+
+if [ $(id -u) -ne 0 ]; then 
+    echo "!! Must be root" && exit 1
+fi
+
+curl -s https://www.spamhaus.org/drop/drop.txt | awk '/^[0-9]/{print $1}' > /var/lib/blocklist/drop.txt
+
+while read ip; do 
+    /usr/sbin/ipset add blocklist $ip -exist || echo $ip
+done < /var/lib/blocklist/drop.txt
+```
+
+`/etc/cron.d/droplist_update`
+
+    0 0 * * 1    root    /opt/blocklist.sh
