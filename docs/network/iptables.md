@@ -44,6 +44,26 @@ COMMIT
 COMMIT
 ```
 
+## Server Ruleset
+
+**`/etc/iptables/rules.v4`**
+
+```
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -m state --state INVALID -j DROP -m comment --comment "Reject invalid" 
+-A INPUT -p icmp -j ACCEPT -m comment --comment "Accept ping"
+-A INPUT -i lo -j ACCEPT -m comment --comment "Accept localhost"
+-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+-A INPUT -j REJECT --reject-with icmp-host-unreachable
+COMMIT
+```
+
 ## Workstation Ruleset
 
 **`/etc/iptables/rules.v4`**

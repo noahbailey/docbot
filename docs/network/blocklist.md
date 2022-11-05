@@ -150,7 +150,7 @@ while read ip; do
     /usr/sbin/ipset add spamhaus $ip -exist || echo $ip
 done < /var/lib/blocklist/spamhaus.txt
 
-ipset save > /etc/ipset.conf
+/usr/sbin/ipset save > /etc/ipset.conf
 ```
 
 `/opt/blocklist_abusech.sh`
@@ -170,7 +170,7 @@ while read ip; do
     /usr/sbin/ipset add abusech $ip -exist || echo $ip
 done < /var/lib/blocklist/abusech.txt
 
-ipset save > /etc/ipset.conf
+/usr/sbin/ipset save > /etc/ipset.conf
 ```
 
 `/etc/cron.d/droplist_update`
@@ -180,3 +180,26 @@ ipset save > /etc/ipset.conf
 
     # Hourly update for abusech dynamic C2 list
     0 * * * *    root    /opt/blocklist_abusech.sh
+
+## Nginx ban script
+
+Create the initial ipset list:
+
+    ipset create scanners hash:ip hashsize 4096
+
+A script to generate blocked hosts based on their presence in a spam log:
+
+```sh
+/usr/sbin/ipset flush scanners
+for ip in $(awk '{print $1}' < /var/log/nginx/spam.log | sort | uniq); do
+    ipset add scanners $ip || echo $ip
+done
+/usr/sbin/ipset save > /etc/ipset.conf
+```
+
+Iptables rules to drop requests from these hosts:
+
+```
+-A INPUT -m set --match-set scanners src -j LOG --log-prefix "BLOCK:SCANNERS:" --log-level 4
+-A INPUT -m set --match-set scanners src -j DROP -m comment --comment "repeat scanners"
+```
