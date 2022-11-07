@@ -189,12 +189,26 @@ Create the initial ipset list:
 
 A script to generate blocked hosts based on their presence in a spam log:
 
+`/opt/blocklist_nginx.sh`
+
 ```sh
+#!/bin/bash
 /usr/sbin/ipset flush scanners
-for ip in $(awk '{print $1}' < /var/log/nginx/spam.log | sort | uniq); do
-    ipset add scanners $ip || echo $ip
+for file in /var/log/nginx/spam.log*; do
+    if [[ "$file" != *"gz" ]]; then
+        for ip in $(awk '{print $1}' < $file | sort | uniq); do
+            /usr/sbin/ipset add scanners -exist $ip
+        done
+    fi
 done
 /usr/sbin/ipset save > /etc/ipset.conf
+```
+
+`/etc/cron.d/droplist_update`
+
+```
+# Hourly update for nginx blocklist
+0 * * * *    root    /opt/blocklist_nginx.sh
 ```
 
 Iptables rules to drop requests from these hosts:
