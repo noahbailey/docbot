@@ -185,30 +185,56 @@ done < /var/lib/blocklist/abusech.txt
 
 Create the initial ipset list:
 
-    ipset create scanners hash:ip hashsize 4096
+    ipset create scanners hash:ip hashsize 4096 counters
 
-A script to generate blocked hosts based on their presence in a spam log:
+This script examines all available 'spam' logs for nginx, then groups by IP. If the IP has scanned the server 10 or more times, the IP is added to the ban list:
 
 `/opt/blocklist_nginx.sh`
 
 ```sh
 #!/bin/bash
-/usr/sbin/ipset flush scanners
+
+# Ensure list exists
+/usr/sbin/ipset list scanners 2>&1> /dev/null || \
+    /usr/sbin/ipset create scanners hash:ip hashsize 4096 counters
+
+# IPs that hit the 'spam' log >10 times get banned:
 for file in /var/log/nginx/spam.log*; do
     if [[ "$file" != *"gz" ]]; then
-        for ip in $(awk '{print $1}' < $file | sort | uniq); do
-            /usr/sbin/ipset add scanners -exist $ip
-        done
+        awk '{print $1}' $file 
     fi
-done
+done | sort | uniq -c | \
+    awk '{if ($1 >= 10) print $2}' | \
+    xargs -n1 /usr/sbin/ipset add scanners -exist
+
+# IPs that make requests containing "wget" also get banned:
+grep -h "wget" /var/log/nginx/* | awk '{print $1}' | \
+    xargs -n1 /usr/sbin/ipset add scanners -exist
+
+# Make banned IP list persistent
 /usr/sbin/ipset save > /etc/ipset.conf
 ```
+
+A second script runs once per week to flush the list & reset the counters. This will unban any IPs that have fallen below the threshold but were not removed by the main script:
+
+`/opt/blocklist_cleanup.sh`
+
+```sh
+#!/bin/bash
+/usr/sbin/ipset flush scanners
+/opt/blocklist_nginx.sh
+```
+
+Both scripts are automated with `cron`. The main script is run once per hour, and the cleanup script runs weekly:
 
 `/etc/cron.d/droplist_update`
 
 ```
 # Hourly update for nginx blocklist
-0 * * * *    root    /opt/blocklist_nginx.sh
+00 * * * *     root    /opt/blocklist_nginx.sh
+
+# Weekly cleanup for nginx blocklist
+30 23 * * 7    root    /usr/blocklist_clean.sh
 ```
 
 Iptables rules to drop requests from these hosts:
@@ -217,3 +243,7 @@ Iptables rules to drop requests from these hosts:
 -A INPUT -m set --match-set scanners src -j LOG --log-prefix "BLOCK:SCANNERS:" --log-level 4
 -A INPUT -m set --match-set scanners src -j DROP -m comment --comment "repeat scanners"
 ```
+
+Check counters on the ipset list:
+
+    ipset list scanners | tail -n +9 | sort -k 3 -g -r 
