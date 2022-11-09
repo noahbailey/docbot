@@ -240,10 +240,43 @@ Both scripts are automated with `cron`. The main script is run once per hour, an
 Iptables rules to drop requests from these hosts:
 
 ```
--A INPUT -m set --match-set scanners src -j LOG --log-prefix "BLOCK:SCANNERS:" --log-level 4
--A INPUT -m set --match-set scanners src -j DROP -m comment --comment "repeat scanners"
+-N LOG_DROP
+-A LOG_DROP -j LOG --log-prefix "BLOCK:SCANNERS:" --log-level 4
+-A LOG_DROP -j DROP
+-A INPUT -m set --match-set scanners src -j LOG_DROP
 ```
 
 Check counters on the ipset list:
 
     ipset list scanners | tail -n +9 | sort -k 3 -g -r 
+
+## SSH ban script
+
+This script can use the same 'scanners' list as the nginx scanners script. 
+
+If the IP has attempted to connect with SSH >5 times in the last month, it will be added to the scanner ban list:
+
+`/opt/blocklist_sshd.sh`
+
+```
+#!/bin/bash
+
+journalctl -u ssh -S -4w | grep invalid | \
+    awk '{print $11}' | \
+    grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | \
+    sort | uniq -c | sort -r | \
+    awk '{if ($1 > 5) print $2}' | \
+    xargs -n1 /usr/sbin/ipset add scanners -exist
+
+# Make banned IP list persistent
+/usr/sbin/ipset save > /etc/ipset.conf
+```
+
+Similar to the nginx script above, it should be regularly updated & flushed once per week.
+
+`/etc/cron.d/droplist_update`
+
+```
+00 * * * *     root    /opt/blocklist_sshd.sh
+30 23 * * 7    root    /usr/blocklist_clean.sh
+```
