@@ -248,7 +248,7 @@ Iptables rules to drop requests from these hosts:
 
 Check counters on the ipset list:
 
-    ipset list scanners | tail -n +9 | sort -k 3 -g -r 
+    ipset list scanners | tail -n +9 | sort -k 3 -g -r  | awk '{print $1"\t"$3"\t"$5}' | less
 
 ## SSH ban script
 
