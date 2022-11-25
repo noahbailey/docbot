@@ -125,7 +125,7 @@ Chain OUTPUT (policy ACCEPT 65 packets, 8447 bytes)
 
 ## Persistent ipset list
 
-    # ipset save > /etc/ipset.conf
+    # ipset save > /etc/iptables/ipsets
 
 Enable the boot-up service
 
@@ -150,7 +150,7 @@ while read ip; do
     /usr/sbin/ipset add spamhaus $ip -exist || echo $ip
 done < /var/lib/blocklist/spamhaus.txt
 
-/usr/sbin/ipset save > /etc/ipset.conf
+/usr/sbin/ipset save > /etc/iptables/ipsets
 ```
 
 `/opt/blocklist_abusech.sh`
@@ -170,7 +170,7 @@ while read ip; do
     /usr/sbin/ipset add abusech $ip -exist || echo $ip
 done < /var/lib/blocklist/abusech.txt
 
-/usr/sbin/ipset save > /etc/ipset.conf
+/usr/sbin/ipset save > /etc/iptables/ipsets
 ```
 
 `/etc/cron.d/droplist_update`
@@ -212,7 +212,7 @@ grep -h "wget" /var/log/nginx/* | awk '{print $1}' | \
     xargs -n1 /usr/sbin/ipset add scanners -exist
 
 # Make banned IP list persistent
-/usr/sbin/ipset save > /etc/ipset.conf
+/usr/sbin/ipset save > /etc/iptables/ipsets
 ```
 
 A second script runs once per week to flush the list & reset the counters. This will unban any IPs that have fallen below the threshold but were not removed by the main script:
@@ -269,7 +269,7 @@ journalctl -u ssh -S -4w | grep invalid | \
     xargs -n1 /usr/sbin/ipset add scanners -exist
 
 # Make banned IP list persistent
-/usr/sbin/ipset save > /etc/ipset.conf
+/usr/sbin/ipset save > /etc/iptables/ipsets
 ```
 
 Similar to the nginx script above, it should be regularly updated & flushed once per week.
