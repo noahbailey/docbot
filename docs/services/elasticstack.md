@@ -158,3 +158,16 @@ output {
 ```
 
 
+## Single-node server
+
+On a single-node server, health state will immediately go to "yellow" since there is not a second system to store replica indices on. You can fix this by setting the number of replicas on an index to zero: 
+
+```
+curl -X PUT "localhost:9200/my-index-name/_settings?pretty" -H 'Content-Type: application/json' -d'
+{
+    "index" : {
+        "number_of_replicas" : 0
+    }
+}
+'
+```
