@@ -20,12 +20,12 @@ GRANT ALL PRIVILEGES ON nextcloud.* TO 'nextcloud';
 
 Install all of the PHP pieces for the site: 
 
-    sudo apt install php-fpm php7.4-curl php7.4-gd php7.4-json php7.4-xml php7.4-mbstring php7.4-zip php7.4-mysql php7.4-intl php7.4-bcmath php7.4-gmp php7.4-imagick imagemagick
+    sudo apt install php-fpm php8.2-curl php8.2-gd php8.2-xml php8.2-mbstring php8.2-zip php8.2-mysql php8.2-intl php8.2-bcmath php8.2-gmp php8.2-imagick imagemagick
 
 
 Then, edit the main config to change the defaults: 
 
-    sudo vim /etc/php/7.4/fpm/php.ini
+    sudo vim /etc/php/8.2/fpm/php.ini
 
 ```ini
 memory_limit = 2048M
@@ -36,7 +36,7 @@ upload_max_filesize = 2G
 
 It's also wise to install a memory cache as well: 
 
-    sudo apt install php-apcu
+    sudo apt install php-apcu php8.2-apcu
 
 Enable this for the site by adding to config.php
 
@@ -44,7 +44,7 @@ Enable this for the site by adding to config.php
 'memcache.local' => '\OC\Memcache\APCu',
 ```
 
-Then edit `/etc/php/7.4/mods-available/apcu.ini` and add: 
+Then edit `/etc/php/8.2/mods-available/apcu.ini` and add: 
 
 ```ini
 apc.enable_cli=1
@@ -68,7 +68,7 @@ The nginx config:
 
 ```ini
 upstream php-handler {
-    server unix:/var/run/php/php7.4-fpm.sock;
+    server unix:/var/run/php/php8.2-fpm.sock;
 }
 
 server {
@@ -240,7 +240,7 @@ Make sure the service is enabled on startup:
 
 Restart php-fpm to use the new modules: 
 
-    sudo systemctl restart php7.4-fpm
+    sudo systemctl restart php8.2-fpm
 
 Then, modify the config.php file: 
 
