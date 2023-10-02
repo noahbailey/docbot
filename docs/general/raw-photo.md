@@ -26,6 +26,21 @@ To decrease exposure:
 
     autoraw ./0123456.RW2 0.5
 
+Example: 
+
+```
+% autoraw P1190192.RW2 2.5
+
+Loading Panasonic DMC-GX85 image from P1190192.RW2 ...
+Wavelet denoising...
+Scaling with darkness 143, saturation 4095, and
+multipliers 2.496094 1.000000 1.503906 1.000000
+AHD interpolation...
+Converting to sRGB colorspace...
+Writing data to standard output ...
+-=>P1190192.RW2.jpg PPM 4608x3464 4608x3464+0+0 8-bit sRGB 5.43557MiB 35.120u 0:06.218
+```
+
 ### Batch process raw files
 
 ```
