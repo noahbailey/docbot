@@ -6,13 +6,13 @@
 
 ## Processing
 
-A bash function to automatically process a RAW photo with "sane defaults" on white balance, denoiseing, sharpening, and contrast. 
+A bash function to automatically process a RAW photo with "sane defaults" on white balance, denoiseing, sharpening, and contrast, then add metadata to the jpeg file. 
 
 ```
 autoraw () {
     FILE=$(basename $1 .RW2)
-    dcraw -w -c -v -n 200 -b ${2:-1} -T $FILE.RW2 | convert - -verbose -sigmoidal-contrast '4.00,50%' -sigmoidal-contrast '-5.00,0%' -adaptive-sharpen '0x4.0' -quality '90' $FILE.raw.jpg
-    exiftool -verbose -overwrite_original -TagsFromFile $FILE.JPG $FILE.raw.jpg
+    dcraw -w -c -v -n 200 -b ${2:-1} -T $FILE.RW2 | convert - -verbose -contrast-stretch 0.5x1% -adaptive-sharpen '0x4.0' -quality '90' -auto-orient $FILE.raw.jpg
+    exiftool -verbose -overwrite_original -TagsFromFile $FILE.RW2 $FILE.raw.jpg
 }
 ```
 
