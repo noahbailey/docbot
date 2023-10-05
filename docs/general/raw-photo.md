@@ -1,10 +1,34 @@
-# Processing RAW photos
+# RAW Photos on Linux
 
-## Required packages
+## Previews in file manager
+
+https://github.com/pop-os/pop/issues/1484
+https://gist.github.com/h4cc/13450db3d4a7457f9b38?permalink_comment_id=3770740
+https://support.system76.com/articles/fix-raw-image-previews/
+
+    sudo apt install rawtherapee
+
+Create a file in `/usr/share/thumbnailers/rawtherapee.thumbnailer ` with this:
+
+```
+[Thumbnailer Entry]
+TryExec=/usr/bin/rawtherapee-cli
+Exec=/usr/bin/rawtherapee-cli -s -n -Y -f -o %o -c %i 
+MimeType=image/x-arw;image/x-bay;image/x-canon-cr2;image/x-canon-crw;image/x-cap;image/x-cr2;image/x-crw;image/x-dcr;image/x-dcraw;image/x-dcs;image/x-dng;image/x-drf;image/x-eip;image/x-erf;image/x-fff;image/x-fuji-raf;image/x-iiq;image/x-k25;image/x-kdc;image/x-mef;image/x-minolta-mrw;image/x-mos;image/x-mrw;image/x-nef;image/x-nikon-nef;image/x-nrw;image/x-olympus-orf;image/x-orf;image/x-panasonic-raw;image/x-panasonic-raw2;image/x-pef;image/x-pentax-pef;image/x-ptx;image/x-pxn;image/x-r3d;image/x-raf;image/x-raw;image/x-rw2;image/x-panasonic-rw2;image/x-rwl;image/x-rwz;image/x-samsung-srw;image/x-sigma-x3f;image/x-sony-arw;image/x-sony-sr2;image/x-sony-srf;image/x-sr2;image/x-srf;image/x-x3f;image/x-adobe-dng;image/x-portable-pixmap;image/tiff;
+```
+
+Clear the thumbnail cache:
+
+    find ~/.cache/thumbnails/ -delete
+
+Refresh the file browser.
+
+
+## Processing RAW files
+
+### Required packages
 
     sudo apt install imagemagick dcraw libimage-exiftool-perl
-
-## Processing
 
 A bash function to automatically process a RAW photo with "sane defaults" on white balance, denoiseing, sharpening, and contrast, then add metadata to the jpeg file. 
 
