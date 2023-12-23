@@ -3,8 +3,8 @@
 Use `tc` to enshittify your connection:
 
 ```
-tc qdisc replace dev ens2 root netem corrupt 5%
-tc qdisc change dev ens2 root netem delay 250ms 20ms distribution normal
+tc qdisc replace dev ens2 root netem corrupt 10%
+tc qdisc change dev ens2 root netem delay 250ms 250ms distribution normal
 ```
 
 If this doesn't work, check that the kernel module is loaded:
