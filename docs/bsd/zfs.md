@@ -21,6 +21,72 @@ Create a striped-mirror pool (similar to raid-10):
 
     zpool create tank mirror /dev/da0 /dev/da1 mirror /dev/da2 /dev/da3
 
+## Replace a Failed Disk
+
+Failed disk in array
+
+```
+          mirror-2               DEGRADED     0     0     0
+            da2                  ONLINE       0     0     0
+            6017198632328599818  FAULTED      0     0     0  was /dev/da1
+            da3                  ONLINE       0     0     0
+```
+
+Find the ID of the failed disk
+
+```
+geom disk list | less
+```
+
+```
+Geom name: da0
+Providers:
+1. Name: da0
+   Mediasize: 2000398934016 (1.8T)
+   ...
+   descr: ATA WDC WD2002FFSX-6
+   lunid: 50014ee2c137727d
+   ident: WD-WCC6N1VSFLSC
+   ...
+```
+
+Find this disk in the system. Yank it. Replace it. 
+
+Repeat this to find the ID of the new disk. 
+
+Replace the failed disk:
+
+```
+zpool replace tank 6017198632328599818 /dev/da0
+```
+
+Check the status of the resilver:
+
+```
+zpool status tank
+
+ state: DEGRADED
+status: One or more devices is currently being resilvered.  The pool will
+        continue to function, possibly in a degraded state.
+action: Wait for the resilver to complete.
+  scan: resilver in progress since Mon Mar 17 19:04:42 2025
+        283G scanned at 2.86G/s, 184G issued at 1.86G/s, 859G total
+        0B resilvered, 21.39% done, 00:06:03 to go
+
+        NAME                       STATE     READ WRITE CKSUM
+        tank                       DEGRADED     0     0     0
+          ...
+          mirror-2                 DEGRADED     0     0     0
+            da2                    ONLINE       0     0     0
+            replacing-1            DEGRADED     0     0     0
+              6017198632328599818  FAULTED      0     0     0  was /dev/da1
+              da0                  ONLINE       0     0     0
+            da3                    ONLINE       0     0     0
+```
+
+It will take a minute... Go for a walk. 
+
+
 ## Create dataset
 
 /tank/backups
