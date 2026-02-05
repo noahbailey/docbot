@@ -32,3 +32,18 @@ Confirm change:
 Close and re-open the browser. 
 
 https://client.meshtastic.org/
+
+## Using a local TUI
+
+Download and install the deb file:
+
+    https://github.com/PeterGrace/meshtui/releases
+
+Find the serial port:
+
+    ls -la /dev/ttyACM0
+
+Launch the program:
+
+    meshtui -s /dev/ttyACM0
+
