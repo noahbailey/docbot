@@ -47,3 +47,18 @@ Launch the program:
 
     meshtui -s /dev/ttyACM0
 
+## Meshtastic Cli
+
+Install the tools
+
+	pipx install meshtastic
+
+Use the tool
+
+	meshtastic -s /dev/ttyACM0 <commands>
+
+Get node list:
+
+	meshtastic -s /dev/ttyACM0 --nodes | less -S
+
+
