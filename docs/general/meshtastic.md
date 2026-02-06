@@ -61,4 +61,29 @@ Get node list:
 
 	meshtastic -s /dev/ttyACM0 --nodes | less -S
 
+Send a traceroute:
+
+	meshtastic -s /dev/ttyACM0 --traceroute xxxxx
+
+Traceroute output will look like this:
+
+```
+Connected to radio
+Sending traceroute request to 9213c6c5 on channelIndex:0 (this could take a while)
+Route traced towards destination:
+!b762276c --> !9213c6c5 (9.5dB)
+Route traced back to us:
+!9213c6c5 --> !b762276c (5.75dB)
+```
+
+Send a message:
+
+	meshtastic -s /dev/ttyACM0 --dest xxxxx --sendtext "ping"
+
+Message send output wil look lie this:
+
+```
+Connected to radio
+Sending text message ping to 9213c6c5 on channelIndex:0 
+```
 
