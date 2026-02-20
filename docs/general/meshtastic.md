@@ -35,6 +35,8 @@ https://client.meshtastic.org/
 
 ## Using a local TUI
 
+### meshtui
+
 Download and install the deb file:
 
     https://github.com/PeterGrace/meshtui/releases
@@ -47,3 +49,14 @@ Launch the program:
 
     meshtui -s /dev/ttyACM0
 
+### Contact
+
+Install from pypi:
+
+    pipx install contact
+
+Launch the program:
+
+    contact -s /dev/ttyACM0
+
+https://github.com/pdxlocations/contact?tab=readme-ov-file#commands
