@@ -60,3 +60,47 @@ Launch the program:
     contact -s /dev/ttyACM0
 
 https://github.com/pdxlocations/contact?tab=readme-ov-file#commands
+
+## Meshmonitor web client
+
+Make sure docker is installed first. 
+
+    sudo apt install docker.io docker-compose
+
+the `/opt/meshmonitor/compose.yml` file:
+
+```yaml
+services:
+  serial-bridge:
+    image: ghcr.io/yeraze/meshtastic-serial-bridge:latest
+    container_name: meshtastic-serial-bridge
+    devices:
+      - /dev/ttyACM0:/dev/ttyACM0
+    ports:
+      - "4403:4403"
+    restart: unless-stopped
+    environment:
+      - SERIAL_DEVICE=/dev/ttyACM0
+      - BAUD_RATE=115200
+      - TCP_PORT=4403
+
+  meshmonitor:
+    image: ghcr.io/yeraze/meshmonitor:latest
+    container_name: meshmonitor
+    ports:
+      - "8080:3001"
+    volumes:
+      - meshmonitor-data:/data
+    environment:
+      - MESHTASTIC_NODE_IP=serial-bridge
+      - ALLOWED_ORIGINS=http://meshy.local:8080
+    restart: unless-stopped
+    depends_on:
+      - serial-bridge
+
+volumes:
+  meshmonitor-data:
+```
+
+Notes:
+* On first run, password has to be changed from `changeme` to something else like `meshtastic`. 
