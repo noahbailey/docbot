@@ -119,7 +119,9 @@ services:
       - /dev/ttyACM0:/dev/ttyACM0
     ports:
       - "4403:4403"
-    restart: unless-stopped
+    restart: always
+    logging:
+      driver: "journald"
     environment:
       - SERIAL_DEVICE=/dev/ttyACM0
       - BAUD_RATE=115200
@@ -134,8 +136,10 @@ services:
       - meshmonitor-data:/data
     environment:
       - MESHTASTIC_NODE_IP=serial-bridge
-      - ALLOWED_ORIGINS=http://meshy.local:8080
-    restart: unless-stopped
+      - ALLOWED_ORIGINS=http://meshy.local:8080,http://meshy:8080
+    restart: always
+    logging:
+      driver: "journald"
     depends_on:
       - serial-bridge
 
