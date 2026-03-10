@@ -150,3 +150,75 @@ volumes:
 Notes:
 * On first run, password has to be changed from `changeme` to something else like `meshtastic`. 
 
+Edit `/etc/default/grub` and disable usb power management:
+
+```
+GRUB_CMDLINE_LINUX_DEFAULT=" ... usbcore.autosuspend=-1"
+```
+
+Update the initrd. 
+
+    sudo update-grub
+
+Reboot and check this output - it should be -1 instead of 2 now.
+
+    cat /sys/module/usbcore/parameters/autosuspend
+
+### Auto-update the container
+
+```sh
+#!/bin/bash
+cd /opt/meshmonitor
+docker compose pull
+docker compose up -d
+```
+
+Make a systemd unit file:
+
+`/etc/systemd/system/meshmonitor-update.service`
+
+```ini
+[Unit]
+Description=Update 
+After=network.target
+StartLimitBurst=3
+
+[Service]
+Type=oneshot
+Restart=on-failure
+RestartSec=60s
+ExecStart=/opt/meshmonitor/update.sh
+```
+
+Timer unit:
+
+`/etc/systemd/system/meshmonitor-update.timer`
+
+```ini
+[Unit]
+Description=MeshMonitor Update
+After=network.target
+
+[Timer]
+OnCalendar=Daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+
+Enable & start the timer:
+
+    sudo systemctl daemon-reload
+    sudo systemctl start meshmonitor-update.timer
+
+Check the status of the timer:
+
+    systemctl list-timers
+
+It will now run on a daily basis at midnight.
+
+```
+NEXT                            LEFT LAST                               PASSED UNIT                         ACTIVATES                     
+Tue 2026-03-10 00:00:00 EDT 3h 32min Mon 2026-03-09 00:00:00 EDT       14h ago meshmonitor-update.timer     meshmonitor-update.service
+```
