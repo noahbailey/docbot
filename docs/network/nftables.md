@@ -6,7 +6,53 @@ NetFilter is a 'modern' replacement for IPTables. You can manipulate and modify 
 
     sudo apt install nftables
 
-## Config
+## Network Router Config
+
+`/etc/nftables.conf`
+
+
+```sh
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+table inet filter {
+
+    counter ct_web_in {}
+    counter ct_web_out {}
+    counter ct_drop {}
+    
+    chain input {
+        type filter hook input priority 0; policy drop;
+        ct state { established,related } counter accept
+        ip protocol icmp counter accept
+        iifname "br0" tcp dport { 22, 53 } counter accept
+        iifname "br0" udp dport { 53, 67, 68 } counter accept
+        counter name ct_drop drop
+    }
+
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+        iifname "eth0" oifname "br0" ct state { established,related } counter name ct_web_in accept 
+        iifname "br0" oifname "eth0" ct state { new,established,related } counter name ct_web_out accept
+        counter name ct_drop drop
+    }
+
+    chain output {
+        type filter hook output priority 0; policy accept;
+        counter
+    }
+}
+
+table ip nat {
+    chain postrouting {
+        type nat hook postrouting priority 100; policy accept;
+        oifname "eth0" counter masquerade
+    }
+}
+```
+
+##  Workstation Config
 
 An example nftables config for my workstation, with stateful firewall and protocol counters: `/etc/nftables.conf`
 
