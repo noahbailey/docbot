@@ -21,7 +21,7 @@ The memory card from the dashcam should be mounted:
 
 To transcode to a standard H.264 encoded MPEG-4 file, use ffmpeg:
 
-    ffmpeg -i /mnt/mmc/AUKEY/movie/input_file.TS -c:v libx264 -c:a copy ~/Desktop/output_file.mp4
+    ffmpeg -i ./input_file.TS -c:v libx264 -c:a copy ./output_file.mp4
 
 The resulting file will work fine with VLC or any other regular video player. 
 
@@ -30,4 +30,7 @@ The resulting file will work fine with VLC or any other regular video player.
 * START is the timestamp in the video to begin the clip, example 1:23
 * DURATION is the amount of time to clip, example 0:45
 
+This will transcode the video from MPEG-2 to mp4 while trimming:
+
     ffmpeg -ss START -i ./input_file.TS -t DURATION -c:v libx264 -c:a copy ./output_file.mp4
+
